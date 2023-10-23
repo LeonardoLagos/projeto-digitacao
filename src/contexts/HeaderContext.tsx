@@ -1,5 +1,6 @@
 import React from 'react'
 import Header from '../components/Header/Header'
+import { Container } from '@mui/material'
 
 interface HeaderProviderProps {
     children: React.ReactNode
@@ -11,7 +12,7 @@ export default function HeaderProvider(props: HeaderProviderProps) {
     return (
         <HeaderContext.Provider value={{}}>
             <Header></Header>
-            {props.children}
+            <Container children={props.children}></Container>
         </HeaderContext.Provider>
     )
 }
