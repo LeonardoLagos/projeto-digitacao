@@ -7,41 +7,9 @@ export default function Home() {
   const refInputDigitacao = useRef<HTMLInputElement>(null)
   const [listaSpans, setListaSpans] = useState<HTMLCollectionOf<Element>>()
   const listaPalavras = [
-    'abacate',
-    'quero-quero',
-    'cão',
-    'é',
-    'à',
-    'á',
-    'abacaxi',
-    '`',
-    'abobora',
-    'abobrinha',
-    'abracar',
-    'abracadabra',
-    'abracadeira',
-    'abracar',
-    'bola',
-    'bolo',
-    'bolacha',
-    'casa',
-    'cachorro',
-    'cachaca',
-    'dado',
-    'xuxu',
-    'zumbi',
-    'dado',
-    'cachaca',
-    'obrigado',
-    'obrigada',
-    'saudade',
-    'quero-quero',
-    'rapadura',
-    'rapaz',
-    'raposa',
-    'rapido',
+    'Em um pequeno vilarejo, nas montanhas distantes, vivia um jovem artesão chamado Elias. Ele esculpia esculturas incríveis usando madeira local. Cada peça contava uma história única. Um dia, enquanto trabalhava, encontrou uma antiga caixa enterrada. Dentro dela, havia um mapa misterioso que o levou a uma jornada emocionante. Ele seguiu as trilhas sinuosas até uma caverna oculta, onde descobriu um tesouro perdido há séculos. O vilarejo nunca mais foi o mesmo. Elias se tornou uma lenda local, e suas esculturas ganharam ainda mais significado com a história do tesouro. O vilarejo prosperou, atraindo viajantes de todos os lugares. E assim, a pequena comunidade floresceu graças à coragem e determinação de um jovem artesão e ao mistério de um tesouro perdido.',
   ]
-  
+
   useEffect(() => {
     setListaLetras([])
     listaPalavras.map((palavra, index) => {
@@ -60,9 +28,10 @@ export default function Home() {
     if (letraPresionada === 'Backspace') {
       if (contagem === 0) return
 
-      listaSpans![contagem - 1]?.classList.remove('bg-green-500')
-      listaSpans![contagem - 1]?.classList.remove('bg-red-500')
-      setContagem(contagem - 1)
+      listaSpans![contagem - 1]?.classList.remove('bg-lime-400')
+      listaSpans![contagem - 1]?.classList.remove('bg-red-400')
+      listaSpans![contagem - 1]?.classList.remove('bg-amber-400')
+      setContagem((prev) => prev - 1)
       return
     }
   }
@@ -75,11 +44,15 @@ export default function Home() {
     if (spanLetra === undefined) return
 
     if (teclaDigitada === letraCorreta) {
-      spanLetra.classList.add('bg-green-500')
+      if (spanLetra.classList.contains('erro'))
+        spanLetra.classList.add('bg-amber-400')
+      else
+        spanLetra.classList.add('bg-lime-400')
     } else {
-      spanLetra.classList.add('bg-red-500')
+      spanLetra.classList.add('bg-red-400')
+      spanLetra.classList.add('erro')
     }
-    setContagem(contagem + 1)
+    setContagem((prev) => prev + 1)
   }
 
   return (
@@ -96,7 +69,7 @@ export default function Home() {
           return <span className="letras" key={index}>{letra}</span>
         })}
       </div>
-      <input autoFocus tabIndex={0} type="text" ref={refInputDigitacao} className="w-0"
+      <input autoFocus tabIndex={0} type="text" ref={refInputDigitacao} className="w-0 h-0"
         onChange={(e) => {
           handleDigitacao(e)
           e.target.value = ''

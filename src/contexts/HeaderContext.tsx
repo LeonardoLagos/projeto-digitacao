@@ -12,7 +12,7 @@ export default function HeaderProvider(props: HeaderProviderProps) {
     return (
         <HeaderContext.Provider value={{}}>
             <Header></Header>
-            <Container children={props.children}></Container>
+            <Container sx={{border: '2px solid black', height: '100vh' }} children={props.children}></Container>
         </HeaderContext.Provider>
     )
 }

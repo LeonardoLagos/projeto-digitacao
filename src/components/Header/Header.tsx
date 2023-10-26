@@ -6,7 +6,7 @@ export default function Header() {
     <div className='mb-16'>
         <AppBar>
         <Toolbar>
-          <IconButton
+          {/* <IconButton
             size="large"
             edge="start"
             color="inherit"
@@ -14,7 +14,7 @@ export default function Header() {
             sx={{ mr: 2 }}
           >
             <MenuIcon />
-          </IconButton>
+          </IconButton> */}
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Teste de Digitação
           </Typography>
