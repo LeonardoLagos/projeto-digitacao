@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react"
+import RefreshIcon from '@mui/icons-material/Refresh';
+import { set } from "react-hook-form";
 
 export default function Home() {
   const [contagem, setContagem] = useState(0)
@@ -6,22 +8,46 @@ export default function Home() {
   const refDivPalavras = useRef<HTMLDivElement>(null)
   const refInputDigitacao = useRef<HTMLInputElement>(null)
   const [listaSpans, setListaSpans] = useState<HTMLCollectionOf<Element>>()
+  const [cronometroAtivo, setCronometroAtivo] = useState(false)
+  const [cronometro, setCronometro] = useState(60)
   const listaPalavras = [
     'Em um pequeno vilarejo, nas montanhas distantes, vivia um jovem artesão chamado Elias. Ele esculpia esculturas incríveis usando madeira local. Cada peça contava uma história única. Um dia, enquanto trabalhava, encontrou uma antiga caixa enterrada. Dentro dela, havia um mapa misterioso que o levou a uma jornada emocionante. Ele seguiu as trilhas sinuosas até uma caverna oculta, onde descobriu um tesouro perdido há séculos. O vilarejo nunca mais foi o mesmo. Elias se tornou uma lenda local, e suas esculturas ganharam ainda mais significado com a história do tesouro. O vilarejo prosperou, atraindo viajantes de todos os lugares. E assim, a pequena comunidade floresceu graças à coragem e determinação de um jovem artesão e ao mistério de um tesouro perdido.',
+    'Em um mundo agitado, encontrar paz interior é essencial. Através da meditação, podemos alcançar clareza mental e equilíbrio emocional. Praticar a gratidão diária também nutre nossa alma, lembrando-nos das pequenas alegrias da vida. Cultivar relações significativas e cuidar da saúde física são pilares para uma vida plena. Ao aceitarmos desafios com resiliência e abraçarmos a positividade, construímos um caminho para a felicidade genuína. A jornada da autodescoberta é infinita, e cada passo nos aproxima de uma existência mais significativa e harmoniosa.',
+    'A busca pelo conhecimento é uma jornada infinita. Aprender é a chave para o crescimento pessoal e profissional. Cada desafio que enfrentamos nos ensina valiosas lições. A curiosidade é o motor que impulsiona a descoberta. Portanto, nunca pare de explorar, questionar e aprender. O mundo é vasto e cheio de maravilhas esperando para serem descobertas.'
   ]
 
-  useEffect(() => {
+  function preencheTexto() {
+    const frase = listaPalavras[Math.floor(Math.random() * listaPalavras.length)];
     setListaLetras([])
-    listaPalavras.map((palavra, index) => {
-      for (const letra of palavra) {
-        setListaLetras((prev) => [...prev, letra])
-      }
-      if (index === listaPalavras.length - 1) return
-      setListaLetras((prev) => [...prev, ' '])
-    })
-
+    for (const letra of frase) {
+      setListaLetras((prev) => [...prev, letra])
+      // listaPalavras.map((palavra, index) => {
+      // if (index === listaPalavras.length - 1) return
+      // setListaLetras((prev) => [...prev, ' '])
+      // })
+    }
     setListaSpans(refDivPalavras.current?.getElementsByClassName('letras'))
+    // for (const elemento of listaSpans!) {
+    //   elemento?.classList.remove('bg-lime-400')
+    //   elemento?.classList.remove('bg-red-400')
+    //   elemento?.classList.remove('bg-amber-400')
+    // }
+    setCronometroAtivo(false)
+  }
+
+  useEffect(() => {
+    preencheTexto()
   }, [])
+
+  useEffect(() => {
+    if (cronometro === 0) return
+    if (!cronometroAtivo) return
+    const interval = setInterval(() => {
+      setCronometro((prev) => prev - 1)
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [cronometro, cronometroAtivo])
 
   function handleApagar(e: React.KeyboardEvent<HTMLInputElement>) {
     const letraPresionada = e.key
@@ -41,7 +67,10 @@ export default function Home() {
 
     const letraCorreta = listaLetras[contagem]
     const spanLetra = listaSpans![contagem]
-    if (spanLetra === undefined) return
+    if (spanLetra === undefined) {
+      setCronometroAtivo(false)
+      return
+    }
 
     if (teclaDigitada === letraCorreta) {
       if (spanLetra.classList.contains('erro'))
@@ -53,6 +82,15 @@ export default function Home() {
       spanLetra.classList.add('erro')
     }
     setContagem((prev) => prev + 1)
+    setCronometroAtivo(true)
+
+  }
+
+  function handleAtualizarTexto() {
+    setContagem(0)
+    setCronometro(60)
+    setListaLetras([])
+    preencheTexto()
   }
 
   return (
@@ -64,12 +102,22 @@ export default function Home() {
           <option value="en-us">🏳Inglês</option>
         </select>
       </div>
-      <div className="w-full h-56 outline outline-1 rounded mt-4 mb-2 p-2 text-xl" ref={refDivPalavras} onClick={() => refInputDigitacao.current?.focus()}>
+      <div className="w-full h-56 outline outline-1 rounded mt-4 mb-1 p-2 text-xl" ref={refDivPalavras} onClick={() => refInputDigitacao.current?.focus()}>
         {listaLetras.map((letra, index) => {
           return <span className="letras" key={index}>{letra}</span>
         })}
       </div>
-      <input autoFocus tabIndex={0} type="text" ref={refInputDigitacao} className="w-0 h-0"
+      <div className="flex items-center justify-end w-full mt-1 gap-1">
+        <div className="justify-center"><p className="bg-slate-300 rounded px-2">{cronometro}s</p></div>
+        <button className="w-1/4 bg-sky-600 rounded" onClick={() => { handleAtualizarTexto() }}>
+          <RefreshIcon sx={{ color: "white" }}></RefreshIcon>
+        </button>
+      </div>
+      <input autoFocus
+        tabIndex={0}
+        type="text"
+        ref={refInputDigitacao}
+        className="w-0 h-0"
         onChange={(e) => {
           handleDigitacao(e)
           e.target.value = ''
