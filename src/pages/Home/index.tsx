@@ -1,22 +1,28 @@
-import { useEffect, useRef, useState } from "react"
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { set } from "react-hook-form";
+import { useEffect, useRef, useState } from "react";
 
 interface cardTexto {
-  listaSpans: HTMLCollectionOf<Element>,
-  divTexto: HTMLDivElement
+  listaSpans: spanProps[],
+  quantidadeAcertos: number,
+  quantidadeErros: number,
+  tempoRestante: number
+}
 
+interface spanProps {
+  className: string,
+  children: string
 }
 
 export default function Home() {
   const [contagem, setContagem] = useState(0)
-  const [listaLetras, setListaLetras] = useState<string[]>([])
+  const [listaLetras, setListaLetras] = useState<spanProps[]>([])
   const refDivPalavras = useRef<HTMLDivElement>(null)
   const refInputDigitacao = useRef<HTMLInputElement>(null)
-  const [listaSpans, setListaSpans] = useState<HTMLCollectionOf<Element>>()
   const [cronometroAtivo, setCronometroAtivo] = useState(false)
   const [cronometro, setCronometro] = useState(60)
-  const [textosFinalizados, setTextosFinalizados] = useState<cardTexto[]>([])
+  const [textosFinalizados, setTextosFinalizados] = useState<cardTexto[]>([] as cardTexto[])
+  const [quantidadeAcertos, setQuantidadeAcertos] = useState(0)
+  const [quantidadeErros, setQuantidadeErros] = useState(0)
   const listaPalavras = [
     'Em um pequeno vilarejo, nas montanhas distantes, vivia um jovem artesão chamado Doran. Ele esculpia esculturas incríveis usando madeira local. Cada peça contava uma história única. Um dia, enquanto trabalhava, encontrou uma antiga caixa enterrada. Dentro dela, havia um mapa misterioso que o levou a uma jornada emocionante. Ele seguiu as trilhas sinuosas até uma caverna oculta, onde descobriu um tesouro perdido há séculos. O vilarejo nunca mais foi o mesmo. Doran se tornou uma lenda local, e suas esculturas ganharam ainda mais significado com a história do tesouro. O vilarejo prosperou, atraindo viajantes de todos os lugares. E assim, a pequena comunidade floresceu graças à coragem e determinação de um jovem artesão e ao mistério de um tesouro perdido.',
     'Em um mundo agitado, encontrar paz interior é essencial. Através da meditação, podemos alcançar clareza mental e equilíbrio emocional. Praticar a gratidão diária também nutre nossa alma, lembrando-nos das pequenas alegrias da vida. Cultivar relações significativas e cuidar da saúde física são pilares para uma vida plena. Ao aceitarmos desafios com resiliência e abraçarmos a positividade, construímos um caminho para a felicidade genuína. A jornada da autodescoberta é infinita, e cada passo nos aproxima de uma existência mais significativa e harmoniosa.',
@@ -24,82 +30,91 @@ export default function Home() {
   ]
 
   function preencheTexto() {
+    setCronometroAtivo(false)
     const frase = listaPalavras[Math.floor(Math.random() * listaPalavras.length)];
     setListaLetras([])
     for (const letra of frase) {
-      setListaLetras((prev) => [...prev, letra])
-      // listaPalavras.map((palavra, index) => {
-      // if (index === listaPalavras.length - 1) return
-      // setListaLetras((prev) => [...prev, ' '])
-      // })
+      setListaLetras((prev) => [...prev, { className: '', children: letra }])
     }
-    setListaSpans(refDivPalavras.current?.getElementsByClassName('letras'))
-    if (listaSpans) {
-      for (const elemento of listaSpans) {
-        elemento.classList.remove('bg-lime-400')
-        elemento.classList.remove('bg-red-400')
-        elemento.classList.remove('bg-amber-400')
-        elemento.classList.remove('erro')
-      }
-    }
-    setCronometroAtivo(false)
+    refInputDigitacao.current?.focus()
   }
+
+  useEffect(() => {
+    if (contagem <= 0) return;
+    if (contagem === listaLetras.length) {
+      finalizaDigitacao()
+    } else {
+      setCronometroAtivo(true)
+    }
+  }, [contagem])
 
   useEffect(() => {
     preencheTexto()
   }, [])
 
   useEffect(() => {
-    if (cronometro === 0) return
     if (!cronometroAtivo) return
     const interval = setInterval(() => {
       setCronometro((prev) => prev - 1)
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [cronometro, cronometroAtivo])
+  }, [cronometroAtivo])
+
+useEffect(() => {
+  if (cronometro === 0) {
+    finalizaDigitacao()
+    setCronometroAtivo(false)
+    return
+  }
+}, [cronometro])
+
 
   function handleApagar(e: React.KeyboardEvent<HTMLInputElement>) {
-    const letraPresionada = e.key
-    if (letraPresionada === 'Backspace') {
+    const teclaPresionada = e.key
+    if (teclaPresionada === 'Backspace') {
       if (contagem === 0) return
+      const caractereAnterior = listaLetras[contagem - 1]
 
-      listaSpans![contagem - 1]?.classList.remove('bg-lime-400')
-      listaSpans![contagem - 1]?.classList.remove('bg-red-400')
-      listaSpans![contagem - 1]?.classList.remove('bg-amber-400')
+      caractereAnterior.className = caractereAnterior.className.replace('bg-lime-400', '')
+      caractereAnterior.className = caractereAnterior.className.replace('bg-red-400', '')
+      caractereAnterior.className = caractereAnterior.className.replace('bg-amber-400', '')
       setContagem((prev) => prev - 1)
-      controleCronometro()
       return
     }
   }
 
   function handleDigitacao(e: React.ChangeEvent<HTMLInputElement>) {
-    const teclaDigitada = e.target.value
+    const caractereDigitado = e.target.value
 
     const letraCorreta = listaLetras[contagem]
-    const spanLetra = listaSpans![contagem]
     if (contagem === listaLetras.length) {
       return
     }
 
-    if (teclaDigitada === letraCorreta) {
-      if (spanLetra.classList.contains('erro'))
-        spanLetra.classList.add('bg-amber-400')
+    if (caractereDigitado === letraCorreta.children) {
+      setQuantidadeAcertos((prev) => prev + 1)
+
+      if (letraCorreta.className.includes('erro'))
+        letraCorreta.className += ' bg-amber-400'
       else
-        spanLetra.classList.add('bg-lime-400')
+        letraCorreta.className += ' bg-lime-400'
+
     } else {
-      spanLetra.classList.add('bg-red-400')
-      spanLetra.classList.add('erro')
+      setQuantidadeErros((prev) => prev + 1)
+      letraCorreta.className += ' bg-red-400'
+      letraCorreta.className += ' erro'
     }
     setContagem((prev) => prev + 1)
-    controleCronometro()
   }
 
   function handleAtualizaTexto() {
-    setContagem(0)
-    setCronometro(60)
-    setListaLetras([])
     preencheTexto()
+    switchDigitacao(true)
+    setQuantidadeAcertos(0)
+    setQuantidadeErros(0)
+    setCronometro(60)
+    setContagem(0)
   }
 
   function segundosPraMinutos(segundos: number) {
@@ -111,14 +126,16 @@ export default function Home() {
     return mDisplay + ':' + sDisplay;
   }
 
-  function controleCronometro() {
-    if (contagem + 1 === listaLetras.length) {
-      setTextosFinalizados((prev) => [...prev, { listaSpans: listaSpans!, divTexto: refDivPalavras.current! }])
-      setCronometroAtivo(false)
-    } else {
-      setCronometroAtivo(true)
-
+  function switchDigitacao(bool: boolean) {
+    if (refInputDigitacao.current) {
+      refInputDigitacao.current.disabled = !bool
     }
+  }
+
+  function finalizaDigitacao() {
+    switchDigitacao(false)
+    setCronometroAtivo(false)
+    setTextosFinalizados((prev) => [...prev, { listaSpans: listaLetras, quantidadeAcertos, quantidadeErros, tempoRestante: cronometro }])
   }
 
   return (
@@ -130,9 +147,12 @@ export default function Home() {
           <option value="en-us">🏳Inglês</option>
         </select>
       </div>
-      <div className="w-full h-56 outline outline-1 rounded mt-4 mb-1 p-2 text-xl" ref={refDivPalavras} onClick={() => refInputDigitacao.current?.focus()}>
+      <div className="w-full h-56 outline outline-1 rounded mt-4 mb-1 p-2 text-xl overflow-auto" ref={refDivPalavras} id="divPalavras" onClick={() => refInputDigitacao.current?.focus()}>
         {listaLetras.map((letra, index) => {
-          return <span className="letras" key={index}>{letra}</span>
+          if(letra.children === ' '){
+          return <span className={letra.className + ' inline-block text-center'} style={{ minWidth: '4px', height: '27px'}} key={index}>&nbsp;</span>
+          }
+          return <span className={letra.className} key={index}>{letra.children}</span>
         })}
       </div>
       <div className="flex items-center justify-end w-full mt-1 gap-1">
@@ -152,21 +172,27 @@ export default function Home() {
         }}
         onKeyUp={(e) => handleApagar(e)}
       />
-      {
-        textosFinalizados.map((texto, index) => {
-          let acertos = 0
-          let erros = 0
-          for(const span of texto.listaSpans){
-            if(span.classList.contains('bg-lime-400'))
-              acertos++
-            if(span.classList.contains('bg-red-400'))
-              erros++
-          }
-          return <div>
-            {acertos} {erros}
-          </div>
-        })
-      }
+      <div className="flex bg-black mt-2 overflow-x-auto">
+        {
+          textosFinalizados.reverse().map((texto, index) => {
+            let multiplicadorTempo = 1
+            if(texto.tempoRestante !== 0) {
+              multiplicadorTempo = 60 / texto.tempoRestante
+            }
+            const sum = (texto.quantidadeAcertos + texto.quantidadeErros);
+            const precisao = sum == 0 ? 0 : (texto.quantidadeAcertos / sum) * 100;
+            return <div className="text-white whitespace-nowrap bg-slate-600 rounded  p-4 m-1" key={index} onClick={(e) => {
+              setListaLetras(texto.listaSpans)
+            }}>
+              <p>Numero de acertos: {texto.quantidadeAcertos}</p>
+              <p>Numero de erros: {texto.quantidadeErros}</p>
+              <p>precisão: {precisao.toFixed(2)}%</p>
+              <p>tempo: {60 - texto.tempoRestante}s</p>
+              <p>Velocidade: {((sum / 5) * multiplicadorTempo).toFixed(2)} ppm</p>
+            </div>
+          })
+        }
+      </div>
     </div>
   )
 }
