@@ -6,9 +6,9 @@ import HeaderProvider from './contexts/HeaderContext.tsx'
 import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <HeaderProvider>
       <RouterProvider router={router} />
     </HeaderProvider>
-  </React.StrictMode>,
+  //</React.StrictMode>
 )

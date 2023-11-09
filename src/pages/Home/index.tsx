@@ -21,6 +21,7 @@ export default function Home() {
   const [cronometroAtivo, setCronometroAtivo] = useState(false)
   const [cronometro, setCronometro] = useState(60)
   const [textosFinalizados, setTextosFinalizados] = useState<cardTexto[]>([] as cardTexto[])
+  const [textoCardAtual, setTextoCardAtual] = useState<cardTexto>()
   const [quantidadeAcertos, setQuantidadeAcertos] = useState(0)
   const [quantidadeErros, setQuantidadeErros] = useState(0)
   const listaPalavras = [
@@ -61,13 +62,13 @@ export default function Home() {
     return () => clearInterval(interval)
   }, [cronometroAtivo])
 
-useEffect(() => {
-  if (cronometro === 0) {
-    finalizaDigitacao()
-    setCronometroAtivo(false)
-    return
-  }
-}, [cronometro])
+  useEffect(() => {
+    if (cronometro === 0) {
+      finalizaDigitacao()
+      setCronometroAtivo(false)
+      return
+    }
+  }, [cronometro])
 
 
   function handleApagar(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -147,10 +148,10 @@ useEffect(() => {
           <option value="en-us">🏳Inglês</option>
         </select>
       </div>
-      <div className="w-full h-56 outline outline-1 rounded mt-4 mb-1 p-2 text-xl overflow-auto" ref={refDivPalavras} id="divPalavras" onClick={() => refInputDigitacao.current?.focus()}>
+      <div className="w-full h-56 outline outline-1 rounded mt-4 mb-1 p-2 text-xl font-medium text-slate-800 overflow-auto" ref={refDivPalavras} id="divPalavras" onClick={() => refInputDigitacao.current?.focus()}>
         {listaLetras.map((letra, index) => {
-          if(letra.children === ' '){
-          return <span className={letra.className + ' inline-block text-center'} style={{ minWidth: '4px', height: '27px'}} key={index}>&nbsp;</span>
+          if (letra.children === ' ') {
+            return <span className={letra.className + ' inline-block text-center'} style={{ minWidth: '4px', height: '27px' }} key={index}>&nbsp;</span>
           }
           return <span className={letra.className} key={index}>{letra.children}</span>
         })}
@@ -172,25 +173,51 @@ useEffect(() => {
         }}
         onKeyUp={(e) => handleApagar(e)}
       />
-      <div className="flex bg-black mt-2 overflow-x-auto">
-        {
-          textosFinalizados.reverse().map((texto, index) => {
-            let multiplicadorTempo = 1
-            if(texto.tempoRestante !== 0) {
-              multiplicadorTempo = 60 / texto.tempoRestante
-            }
-            const sum = (texto.quantidadeAcertos + texto.quantidadeErros);
-            const precisao = sum == 0 ? 0 : (texto.quantidadeAcertos / sum) * 100;
-            return <div className="text-white whitespace-nowrap bg-slate-600 rounded  p-4 m-1" key={index} onClick={(e) => {
-              setListaLetras(texto.listaSpans)
-            }}>
-              <p>Numero de acertos: {texto.quantidadeAcertos}</p>
-              <p>Numero de erros: {texto.quantidadeErros}</p>
-              <p>precisão: {precisao.toFixed(2)}%</p>
-              <p>tempo: {60 - texto.tempoRestante}s</p>
-              <p>Velocidade: {((sum / 5) * multiplicadorTempo).toFixed(2)} ppm</p>
+      <div className='flex'>
+        {textosFinalizados.length > 0 &&
+        <div className="flex flex-col bg-black  w-1/4 h-96 rounded mt-2 overflow-y-auto">
+          {
+            textosFinalizados.reverse().map((texto, index) => {
+              let multiplicadorTempo = 1
+              if (texto.tempoRestante !== 0) {
+                multiplicadorTempo = 60 / texto.tempoRestante
+              }
+              const sum = (texto.quantidadeAcertos + texto.quantidadeErros);
+              const precisao = sum == 0 ? 0 : (texto.quantidadeAcertos / sum) * 100;
+              return <div className="text-white whitespace-nowrap bg-slate-600 rounded  px-4  py-2 m-1 text-sm font-medium" key={index} onClick={(e) => {
+                setTextoCardAtual(texto)
+              }}>
+                <div className='flex items-center '>
+                  <p className='text-lime-400'>{texto.quantidadeAcertos}</p>/<p className='text-red-500'>{texto.quantidadeErros}</p>
+                  <div className='bg-red-500 h-2 w-full rounded overflow-hidden mx-2'>
+                    <div className='bg-lime-500' style={{
+                      width: `${precisao}%`,
+                      height: '8px'
+                    }}></div>
+                  </div>
+                  <p className='text-lime-400'>{precisao.toFixed(2)}%</p>
+                </div>
+                {/* <p>tempo: {60 - texto.tempoRestante}s</p> */}
+                <p>Velocidade: {((sum / 5) * multiplicadorTempo).toFixed(2)} ppm</p>
+              </div>
+            })
+          }
+        </div>}
+        {textoCardAtual &&
+          <div className='bg-slate-600 w-3/4 h-96 rounded px-4 py-2 ml-2 mt-2 text font-medium text-white'>
+            <div className="bg-white  w-full h-56 rounded mt-1 p-2 text-xl font-medium text-slate-800 overflow-auto" >
+              {textoCardAtual.listaSpans.map((letra, index) => {
+                if (letra.children === ' ') {
+                  return <span className={letra.className + ' inline-block text-center'} style={{ minWidth: '4px', height: '27px' }} key={index}>&nbsp;</span>
+                }
+                return <span className={letra.className} key={index}>{letra.children}</span>
+              })}
             </div>
-          })
+            <p className='text-lime-400'>Quantidade acertos: {textoCardAtual.quantidadeAcertos}</p>
+            <p className='text-red-400'>Quantidade erros: {textoCardAtual.quantidadeErros}</p>
+            <p>Tempo: {60 - textoCardAtual.tempoRestante}s</p>
+            <p>Velocidade: {(((textoCardAtual.quantidadeAcertos + textoCardAtual.quantidadeErros) / 5) * (60 / textoCardAtual.tempoRestante)).toFixed(2)} ppm</p>
+          </div>
         }
       </div>
     </div>

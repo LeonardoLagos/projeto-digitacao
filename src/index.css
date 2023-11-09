@@ -2,14 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
-body{
-    overflow: hidden !important;
+body {
+    overflow: auto !important; 
     width: 100vw;
     left: 100vh;
 }
 
-span{
+span {
     margin: 0 !important;
     padding: 0 !important;
     box-sizing: border-box !important;
 }
+
+div::-webkit-scrollbar {
+    width: 4px;
+    background: darkgray;
+    border-radius: 0.25rem;
+}
+
+div::-webkit-scrollbar-thumb {
+    background: gray;
+    border-radius: 0.25rem;
+}
+
+div::-webkit-scrollbar-track {
+    background: transparent;
+}
+
