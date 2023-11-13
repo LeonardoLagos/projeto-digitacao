@@ -1,9 +1,10 @@
-import { AppBar, Button, Toolbar, Typography } from "@mui/material";
+import { AppBar, Button, Container, Toolbar, Typography } from "@mui/material";
+import { Outlet } from "react-router-dom";
 
 export default function Header() {
   return (
-    <div className='mb-16'>
-        <AppBar>
+    <div>
+      <AppBar>
         <Toolbar>
           {/* <IconButton
             size="large"
@@ -19,7 +20,10 @@ export default function Header() {
           </Typography>
           <Button color="inherit">Login</Button>
         </Toolbar>
-        </AppBar>
+      </AppBar>
+      <Container sx={{marginTop: '3rem'}}>
+        <Outlet />
+      </Container>
     </div>
   )
 }
