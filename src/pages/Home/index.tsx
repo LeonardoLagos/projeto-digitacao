@@ -1,6 +1,7 @@
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { useEffect, useRef, useState } from "react";
 import { api } from '../../services/api';
+import { useNavigate } from 'react-router-dom';
 
 interface cardTexto {
   listaSpans: spanProps[],
@@ -25,6 +26,8 @@ export default function Home() {
   const [textoCardAtual, setTextoCardAtual] = useState<cardTexto>()
   const [quantidadeAcertos, setQuantidadeAcertos] = useState(0)
   const [quantidadeErros, setQuantidadeErros] = useState(0)
+
+  const navigate = useNavigate()
 
   async function preencheTexto() {
     setCronometroAtivo(false)
@@ -164,7 +167,7 @@ export default function Home() {
           <option value="en-us">🏳Inglês</option>
         </select> */}
       </div>
-      <div className="w-full h-56 outline outline-1 rounded mt-4 mb-1 p-2 text-xl font-medium overflow-auto" ref={refDivPalavras} id="divPalavras" onClick={() => refInputDigitacao.current?.focus()}>
+      <div className="w-full h-56 outline outline-1 rounded mt-4 mb-1 p-2 text-xl font-medium overflow-auto text-justify" ref={refDivPalavras} id="divPalavras" onClick={() => refInputDigitacao.current?.focus()}>
         {listaLetras.map((letra, index) => {
           if (letra.children === ' ') {
             return <span className={letra.className + ' inline-block text-center'} style={{ minWidth: '4px', height: '27px' }} key={index}>&nbsp;</span>

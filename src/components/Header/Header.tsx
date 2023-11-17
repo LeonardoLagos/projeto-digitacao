@@ -1,7 +1,8 @@
 import { AppBar, Button, Container, Toolbar, Typography } from "@mui/material";
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet, useNavigate } from "react-router-dom";
 
 export default function Header() {
+  const navigate = useNavigate()
   return (
     <div>
       <AppBar>
@@ -18,7 +19,7 @@ export default function Header() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Teste de Digitação
           </Typography>
-          <Button color="inherit">Login</Button>
+          <Button color="inherit" onClick={(e) => navigate('/login')}>Login</Button>
         </Toolbar>
       </AppBar>
       <Container sx={{marginTop: '3rem'}}>
