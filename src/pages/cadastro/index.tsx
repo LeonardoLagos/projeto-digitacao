@@ -3,13 +3,22 @@ import { Button, TextField } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { z } from 'zod'
+import { apiLogin } from '../../services/apiLogin'
 
 
 const schema = z.object({
-    email: z.string().email("Insira um e-mail válido").min(1),
-    nome: z.string().min(1),
-    senha: z.string().min(8, "Senhas contém no mínimo 8 caractéres.").max(100),
-    confirmarSenha: z.string().min(8, "Senhas contém no mínimo 8 caractéres.").max(100)
+    email: z.string().email("* Insira um e-mail válido").min(1, '* Campo obrigatório'),
+    nome: z.string().min(1, '* Campo obrigatório'),
+    senha: z.string().min(8, "* Senhas contém no mínimo 8 caractéres.").max(100),
+    confirmarSenha: z.string().min(8, "* Senhas contém no mínimo 8 caractéres.").max(100)
+  }).superRefine(({ confirmarSenha, senha}, ctx) => {
+    if (confirmarSenha !== senha) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: '* Senhas não conferem',
+        path: ['confirmarSenha']
+      })
+    }
   })
   
   type FormData = z.infer<typeof schema>
@@ -22,7 +31,19 @@ export default function Cadastro() {
     })
   
     function onSubmit(data: FormData) {
-      console.log(data.email, data.senha)
+      console.log(data.email,data.nome, data.senha)
+
+      apiLogin.post('/usuarios', {
+        login: data.email,
+        nome: data.nome,
+        senha: data.senha,
+        googleId: ''
+      }).then((retorno) => {
+        console.log(retorno.data)
+        console.log('cadastrado com sucesso')
+      }).catch((retorno) => {
+        console.log(retorno)
+      })
     }
   
     return (
@@ -33,26 +54,13 @@ export default function Cadastro() {
         <form
           className="flex flex-col w-2/6 h-full text-slate-50 justify-center px-12"
           onSubmit={handleSubmit(onSubmit)}>
-          <TextField label="nome" variant="standard" type="text" margin="none" {...register("nome")} />
-          <div className="h-6 w-full">
-            {errors.nome?.message && <p className=" text-red-500">{errors.nome.message}</p>}
-          </div>
-          <TextField label="e-mail" variant="standard" type="email" margin="none" {...register("email")} />
-          <div className="h-6 w-full">
-            {errors.email?.message && <p className=" text-red-500">{errors.email.message}</p>}
-          </div>
-          <TextField label="senha" variant="standard" type="password" margin="none" {...register("senha")} />
-          <div className="h-6 w-full">
-            {errors.senha?.message && <p className=" text-red-500">{errors.senha.message}</p>}
-          </div>
-          <TextField label="confirmarSenha" variant="standard" type="password" margin="none" {...register("confirmarSenha")} />
-          <div className="h-6 w-full">
-            {errors.confirmarSenha?.message && <p className="text-red-500">{errors.confirmarSenha.message}</p>}
-          </div>
+          <TextField label="nome" helperText={errors.nome?.message} variant="standard" type="text" margin="none" {...register("nome")} />
+          <TextField label="e-mail" helperText={errors.email?.message} variant="standard" type="email" margin="none" {...register("email")} />
+          <TextField label="senha" helperText={errors.senha?.message} variant="standard" type="password" margin="none" {...register("senha")} />
+          <TextField label="confirmarSenha" helperText={errors.confirmarSenha?.message} variant="standard" type="password" margin="none" {...register("confirmarSenha")} />
           <Button type="submit" sx={{ marginTop: '8px', marginBottom: '8px' }}>Entrar</Button>
           <div className="flex flex-col items-center text-sm">
-            <a href="#" className="text-center text-yellow-300">Esqueceu sua senha?</a>
-            <p>Não possui conta? <a href="/cadastro" className="text-center text-yellow-300">Cadastrar-se</a></p>
+            <p>Possui conta? <a href="/login" className="text-center text-yellow-300">login</a></p>
           </div>
         </form>
       </div>

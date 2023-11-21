@@ -24,27 +24,41 @@ const customTheme = (outerTheme: Theme) =>
         components: {
             MuiInputBase: {
                 styleOverrides: {
-                    
+
                 }
             },
+
             MuiTextField: {
                 styleOverrides: {
                     root: {
+                        margin: '4px 0px',
                         '--TextField-brandBorderColor': '#ababab',
                         '--TextField-brandBorderHoverColor': '#B2BAC2',
                         '--TextField-brandBorderFocusedColor': '#6F7E8C',
                     }
                 },
             },
+            MuiFormHelperText: {
+                styleOverrides: {
+                    root: {
+                        color: 'var(--TextField-brandBorderColor)',
+                        '&.Mui-focused': {
+                            color: '#e3ce10',
+                        },
+
+                    },
+                }
+            },
             MuiFormLabel: {
-              styleOverrides: {
-                root: {
-                  color: 'var(--TextField-brandBorderColor)',
-                  '&.Mui-focused': {
-                    color: '#e3ce10',
-                  },
+                styleOverrides: {
+                    root: {
+                        color: 'var(--TextField-brandBorderColor)',
+                        '&.Mui-focused': {
+                            color: '#e3ce10',
+                        },
+
+                    },
                 },
-              },
             },
             MuiInput: {
                 styleOverrides: {

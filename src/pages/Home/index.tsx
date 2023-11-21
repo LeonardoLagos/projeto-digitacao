@@ -159,7 +159,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col pt-2 text-slate-50" >
+    <div className="flex flex-col pt-2 text-slate-50">
       <div className="flex gap-1">
         {/* <p>Linguagem:</p>
         <select className="outline outline-1 rounded px-1 text-sm">
@@ -178,7 +178,7 @@ export default function Home() {
       <div className="flex items-center justify-end w-full mt-1 gap-1">
         <div className="justify-center"><p className="bg-slate-700 rounded font-medium px-2">{segundosPraMinutos(cronometro)}</p></div>
         <button className="w-1/4 bg-sky-600 rounded" onClick={() => { handleAtualizaTexto() }}>
-          <RefreshIcon sx={{ color: "white" }}></RefreshIcon>
+          <RefreshIcon></RefreshIcon>
         </button>
       </div>  
       <input autoFocus
