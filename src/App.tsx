@@ -3,6 +3,7 @@ import Home from './pages/Home'
 import Login from './pages/login'
 import Header from './components/Header/Header'
 import Cadastro from './pages/cadastro'
+import PaginaPerfil from './pages/paginaPerfil'
 
 const router = createBrowserRouter([
     {
@@ -11,6 +12,10 @@ const router = createBrowserRouter([
             {
                 path: '/',
                 element: <Home></Home>
+            },
+            {
+                path: '/paginaPerfil',
+                element: <PaginaPerfil></PaginaPerfil>
             }
         ]
     },

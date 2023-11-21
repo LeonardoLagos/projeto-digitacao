@@ -34,13 +34,13 @@ export default function Cadastro() {
       console.log(data.email,data.nome, data.senha)
 
       apiLogin.post('/usuarios', {
-        login: data.email,
         nome: data.nome,
+        email: data.email,
         senha: data.senha,
-        googleId: ''
+        foto_perfil: '',
+        google_id: ''
       }).then((retorno) => {
         console.log(retorno.data)
-        console.log('cadastrado com sucesso')
       }).catch((retorno) => {
         console.log(retorno)
       })
@@ -58,7 +58,7 @@ export default function Cadastro() {
           <TextField label="e-mail" helperText={errors.email?.message} variant="standard" type="email" margin="none" {...register("email")} />
           <TextField label="senha" helperText={errors.senha?.message} variant="standard" type="password" margin="none" {...register("senha")} />
           <TextField label="confirmarSenha" helperText={errors.confirmarSenha?.message} variant="standard" type="password" margin="none" {...register("confirmarSenha")} />
-          <Button type="submit" sx={{ marginTop: '8px', marginBottom: '8px' }}>Entrar</Button>
+          <Button type="submit" sx={{ marginTop: '8px', marginBottom: '8px' }}>Cadastrar</Button>
           <div className="flex flex-col items-center text-sm">
             <p>Possui conta? <a href="/login" className="text-center text-yellow-300">login</a></p>
           </div>
