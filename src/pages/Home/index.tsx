@@ -156,10 +156,11 @@ export default function Home() {
     switchDigitacao(false)
     setCronometroAtivo(false)
     setTextosFinalizados((prev) => [...prev, { listaSpans: listaLetras, quantidadeAcertos, quantidadeErros, tempoRestante: cronometro }])
+    //TODO: adiocionar texto ao histórico banco de dados
   }
 
   return (
-    <div className="flex flex-col pt-2 text-slate-50">
+    <div className="flex flex-col text-slate-50">
       <div className="flex gap-1">
         {/* <p>Linguagem:</p>
         <select className="outline outline-1 rounded px-1 text-sm">
@@ -180,7 +181,7 @@ export default function Home() {
         <button className="w-1/4 bg-sky-600 rounded" onClick={() => { handleAtualizaTexto() }}>
           <RefreshIcon></RefreshIcon>
         </button>
-      </div>  
+      </div>
       <input autoFocus
         tabIndex={0}
         type="text"
@@ -239,6 +240,9 @@ export default function Home() {
           </div>
         }
       </div>
+      {textoCardAtual && textoCardAtual.listaSpans.map((letra, index) => {
+        return <span key={index}>{JSON.stringify(letra)}</span>
+      })}
     </div>
   )
 }

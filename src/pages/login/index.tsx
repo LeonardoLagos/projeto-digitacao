@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { apiLogin } from "../../services/apiLogin";
 import { useContext, useEffect, useState } from "react";
-import { User, UserContext } from "../../contexts/userContext";
+import { Usuario, UserContext } from "../../contexts/userContext";
 
 
 const schema = z.object({
@@ -37,7 +37,7 @@ export default function Login() {
       senha: data.senha,
       googleId: ''
     }).then((retorno) => {
-      setUser(retorno.data as User)
+      localStorage.setItem('token', retorno.data)
       navigate('/')
     }).catch((retorno) => {
       if (retorno.response?.data)
