@@ -1,7 +1,9 @@
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { api } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
+import { apiLogin } from '../../services/apiLogin';
+import { UserContext } from '../../contexts/userContext';
 
 interface cardTexto {
   listaSpans: spanProps[],
@@ -10,12 +12,13 @@ interface cardTexto {
   tempoRestante: number
 }
 
-interface spanProps {
+export interface spanProps {
   className: string,
   children: string
 }
 
 export default function Home() {
+  const { user } = useContext(UserContext)
   const [contagem, setContagem] = useState(0)
   const [listaLetras, setListaLetras] = useState<spanProps[]>([])
   const refDivPalavras = useRef<HTMLDivElement>(null)
@@ -156,6 +159,17 @@ export default function Home() {
     switchDigitacao(false)
     setCronometroAtivo(false)
     setTextosFinalizados((prev) => [...prev, { listaSpans: listaLetras, quantidadeAcertos, quantidadeErros, tempoRestante: cronometro }])
+    api.post('/historico', {
+      id_usuario: user.id,
+      texto: JSON.stringify(listaLetras),
+      quantidade_acertos: quantidadeAcertos,
+      quantidade_erros: quantidadeErros,
+      tempo_total: 60 - cronometro
+    }).then((retorno) => {
+      console.log(retorno)
+    }).catch((retorno) => {
+      console.log(retorno)
+    })
     //TODO: adiocionar texto ao histórico banco de dados
   }
 
@@ -240,9 +254,6 @@ export default function Home() {
           </div>
         }
       </div>
-      {textoCardAtual && textoCardAtual.listaSpans.map((letra, index) => {
-        return <span key={index}>{JSON.stringify(letra)}</span>
-      })}
     </div>
   )
 }
