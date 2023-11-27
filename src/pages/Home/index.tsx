@@ -4,13 +4,7 @@ import { api } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 import { apiLogin } from '../../services/apiLogin';
 import { UserContext } from '../../contexts/userContext';
-
-interface cardTexto {
-  listaSpans: spanProps[],
-  quantidadeAcertos: number,
-  quantidadeErros: number,
-  tempoRestante: number
-}
+import { cardTexto } from '../paginaPerfil';
 
 export interface spanProps {
   className: string,
@@ -158,13 +152,14 @@ export default function Home() {
   function finalizaDigitacao() {
     switchDigitacao(false)
     setCronometroAtivo(false)
-    setTextosFinalizados((prev) => [...prev, { listaSpans: listaLetras, quantidadeAcertos, quantidadeErros, tempoRestante: cronometro }])
+    setTextosFinalizados((prev) => [...prev, { texto: listaLetras, numero_acertos: quantidadeAcertos, numero_erros: quantidadeErros, tempo_total: cronometro, palavras_por_minuto: (((quantidadeAcertos + quantidadeErros) / 5) * (cronometro == 0 ? 1 : 60 / cronometro)) } as cardTexto])
     api.post('/historico', {
       id_usuario: user.id,
       texto: JSON.stringify(listaLetras),
       quantidade_acertos: quantidadeAcertos,
       quantidade_erros: quantidadeErros,
-      tempo_total: 60 - cronometro
+      palavras_por_minuto: (((quantidadeAcertos + quantidadeErros) / 5) * (cronometro == 0 ? 1 : 60 / cronometro)).toFixed(2),
+      tempo_total: 60 - cronometro,
     }).then((retorno) => {
       console.log(retorno)
     }).catch((retorno) => {
@@ -213,16 +208,16 @@ export default function Home() {
             {
               textosFinalizados.reverse().map((texto, index) => {
                 let multiplicadorTempo = 1
-                if (texto.tempoRestante !== 0) {
-                  multiplicadorTempo = 60 / texto.tempoRestante
+                if (texto.tempo_total !== 0) {
+                  multiplicadorTempo = 60 / texto.tempo_total
                 }
-                const sum = (texto.quantidadeAcertos + texto.quantidadeErros);
-                const precisao = sum == 0 ? 0 : (texto.quantidadeAcertos / sum) * 100;
+                const sum = (texto.numero_acertos + texto.numero_erros);
+                const precisao = sum == 0 ? 0 : (texto.numero_acertos / sum) * 100;
                 return <div className="text-white whitespace-nowrap bg-slate-600 rounded  px-4  py-2 m-1 text-sm font-medium" key={index} onClick={(e) => {
                   setTextoCardAtual(texto)
                 }}>
                   <div className='flex items-center '>
-                    <p className='text-lime-500'>{texto.quantidadeAcertos}</p>/<p className='text-red-400'>{texto.quantidadeErros}</p>
+                    <p className='text-lime-500'>{texto.numero_acertos}</p>/<p className='text-red-400'>{texto.numero_acertos}</p>
                     <div className='bg-red-500 h-2 w-full rounded overflow-hidden mx-2'>
                       <div className='bg-lime-500' style={{
                         width: `${precisao}%`,
@@ -240,17 +235,17 @@ export default function Home() {
         {textoCardAtual &&
           <div className='bg-slate-600 w-3/4 h-96 rounded px-4 py-2 ml-2 mt-2 text font-medium'>
             <div className="border w-full h-56 rounded mt-1 p-2 text-xl font-medium overflow-auto" >
-              {textoCardAtual.listaSpans.map((letra, index) => {
+              {textoCardAtual.texto.map((letra, index) => {
                 if (letra.children === ' ') {
                   return <span className={letra.className + ' inline-block text-center'} style={{ minWidth: '4px', height: '27px' }} key={index}>&nbsp;</span>
                 }
                 return <span className={letra.className} key={index}>{letra.children}</span>
               })}
             </div>
-            <p className='text-lime-500'>Quantidade acertos: {textoCardAtual.quantidadeAcertos}</p>
-            <p className='text-red-400'>Quantidade erros: {textoCardAtual.quantidadeErros}</p>
-            <p>Tempo: {60 - textoCardAtual.tempoRestante}s</p>
-            <p>Velocidade: {(((textoCardAtual.quantidadeAcertos + textoCardAtual.quantidadeErros) / 5) * ( textoCardAtual.tempoRestante == 0 ? 1 : 60 / textoCardAtual.tempoRestante)).toFixed(2)} ppm</p>
+            <p className='text-lime-500'>Quantidade acertos: {textoCardAtual.numero_acertos}</p>
+            <p className='text-red-400'>Quantidade erros: {textoCardAtual.numero_erros}</p>
+            <p>Tempo: {60 - textoCardAtual.tempo_total}s</p>
+            <p>Velocidade: {(((textoCardAtual.numero_acertos + textoCardAtual.numero_erros) / 5) * (textoCardAtual.tempo_total == 0 ? 1 : 60 / textoCardAtual.tempo_total)).toFixed(2)} ppm</p>
           </div>
         }
       </div>
