@@ -42,13 +42,13 @@ export default function Header() {
           >
             <MenuIcon />
           </IconButton> */}
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} onClick={(e) => {navigate('/')}}>
             Teste de Digitação
           </Typography>
           {localStorage.getItem('token') ?
             <div className="flex items-center gap-4">
               <p>{user.nome}</p>
-              <Avatar src={user.fotoPerfil} alt="Foto Perfil." onClick={(e) => navigate('/paginaPerfil')} />
+              <Avatar src={user.fotoPerfil} alt="Foto Perfil." onClick={(e) => navigate('/paginaPerfil')} sx={{cursor: 'pointer'}}/>
               <Button color="inherit" onClick={(e) => navigate('/logout')}>Logout</Button>
             </div>
             :
