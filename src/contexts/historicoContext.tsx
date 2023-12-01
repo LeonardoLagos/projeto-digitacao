@@ -16,6 +16,7 @@ interface HistoricoProviderProps {
 
 type HistoricoContextData = {
     listaHistorico: cardTexto[],
+    atualizaHistorico: () => void
 }
 
 export const HistoricoContext = createContext({} as HistoricoContextData)
@@ -24,7 +25,7 @@ export function HistoricoProvider({ children }: HistoricoProviderProps) {
     const [listaHistorico, setListaHistorico] = useState<cardTexto[]>([] as cardTexto[])
     const { user } = useContext(UserContext)
 
-    useEffect(() => {
+    function atualizaHistorico() {
         api.get('/historico', {
             timeout: 3000,
             params: {
@@ -37,10 +38,10 @@ export function HistoricoProvider({ children }: HistoricoProviderProps) {
             .catch((err) => {
                 console.log(err)
             })
-    }, [user.id])
+    }
 
     return (
-        <HistoricoContext.Provider value={{ listaHistorico }}>
+        <HistoricoContext.Provider value={{ listaHistorico, atualizaHistorico }}>
             {children}
         </HistoricoContext.Provider>
     )

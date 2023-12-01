@@ -7,6 +7,7 @@ import { CustomTabPanel, a11yProps } from '../../services/paginacaoMui'
 import TabVelocidade from '../../components/tabVelocidade'
 import TabPrecisao from '../../components/tabPrecisao'
 import TabErros from '../../components/tabErros'
+import { HistoricoContext } from '../../contexts/historicoContext'
 
 export interface cardTexto {
   texto: spanProps[],
@@ -21,10 +22,13 @@ export default function Dashboard() {
   const navigate = useNavigate()
   const [value, setValue] = useState(0);
   const { user } = useContext(UserContext)
-
+  const { atualizaHistorico } = useContext(HistoricoContext)
   useEffect(() => {
     if (localStorage.getItem('token') == null)
       navigate('/')
+
+      atualizaHistorico()
+
   }, [])
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
