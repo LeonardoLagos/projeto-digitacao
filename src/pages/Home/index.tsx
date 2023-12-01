@@ -4,7 +4,7 @@ import { api } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 import { apiLogin } from '../../services/apiLogin';
 import { UserContext } from '../../contexts/userContext';
-import { cardTexto } from '../paginaPerfil';
+import { cardTexto } from '../dashboard';
 
 export interface spanProps {
   className: string,

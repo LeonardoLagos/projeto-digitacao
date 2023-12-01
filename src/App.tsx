@@ -1,10 +1,10 @@
 import { createBrowserRouter } from 'react-router-dom'
-import Home from './pages/Home'
-import Login from './pages/login'
 import Header from './components/Header'
-import Cadastro from './pages/cadastro'
-import PaginaPerfil from './pages/paginaPerfil'
 import Logout from './components/Logout'
+import Home from './pages/Home'
+import Cadastro from './pages/cadastro'
+import Dashboard from './pages/dashboard'
+import Login from './pages/login'
 
 const router = createBrowserRouter([
     {
@@ -15,8 +15,8 @@ const router = createBrowserRouter([
                 element: <Home></Home>
             },
             {
-                path: '/paginaPerfil',
-                element: <PaginaPerfil></PaginaPerfil>
+                path: '/dashboard',
+                element: <Dashboard></Dashboard>
             }
         ]
     },

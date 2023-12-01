@@ -42,7 +42,7 @@ export default function Header() {
           >
             <MenuIcon />
           </IconButton> */}
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} onClick={(e) => {navigate('/')}}>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1, cursor: 'pointer' }} onClick={(e) => {navigate('/')}} >
             Teste de Digitação
           </Typography>
           {localStorage.getItem('token') ?
