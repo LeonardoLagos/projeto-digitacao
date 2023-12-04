@@ -1,32 +1,56 @@
-import { useContext, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { useContext, useEffect, useState } from 'react'
+import { Cell, Label, LabelList, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { HistoricoContext } from '../../contexts/historicoContext'
-import { spanProps } from '../../pages/Home'
+
+interface precisaoGeral {
+    contagem: number,
+    tipo: string,
+    precisao: string
+}
 
 export default function TabPrecisao() {
-    const navigate = useNavigate()
     const { listaHistorico } = useContext(HistoricoContext)
+    const [precisaoGeral, setPrecisaoGeral] = useState<precisaoGeral[]>([] as precisaoGeral[])
     useEffect(() => {
-        if (localStorage.getItem('token') == null)
-            navigate('/')
-    }, [])
-
-    useEffect(() => {
-        if (listaHistorico.length === 0) return
-
-        listaHistorico.forEach((item) => {
-            JSON.parse(item.texto as unknown as string).forEach((letra: spanProps) => {
-                if (letra.className.includes('erro')) {
-                }
-            })
-
-            console.log(item)
+        const listaPrecisaoGeral = [] as precisaoGeral[]
+        const erros = listaHistorico.reduce((acc, cur) => acc + cur.numero_erros, 0)
+        const acertos = listaHistorico.reduce((acc, cur) => acc + cur.numero_acertos, 0)
+        listaPrecisaoGeral.push({
+            contagem: erros,
+            tipo: 'erros',
+            precisao: (acertos / (erros + acertos) * 100).toFixed(2) + '%'
         })
-    }, [listaHistorico])
+        listaPrecisaoGeral.push({
+            contagem: listaHistorico.reduce((acc, cur) => acc + cur.numero_acertos, 0),
+            tipo: 'acertos',
+            precisao: (acertos / (erros + acertos) * 100).toFixed(2) + '%'
+        })
+        setPrecisaoGeral(listaPrecisaoGeral)
+    }, [])
 
     return (
         <div>
+            <div className='flex w-full h-40 '>
+                <ResponsiveContainer>
+                    <PieChart>
+                        <Pie data={precisaoGeral}
+                            dataKey="contagem"
+                            label={{ fontSize: '16px' }}
+                            labelLine={true}
+                            animationDuration={300}
+                            className='outline-none'
+                        >
+                            {
+                                precisaoGeral.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={index % 2 === 0 ? 'rgb(248 113 113)' : 'rgb(132 204 22)'} />
+                                ))
+                            }
+                            <LabelList dataKey={'precisao'} fill='black' fontSize={'60px'} />
+                        </Pie>
+                    </PieChart>
+                </ResponsiveContainer>
+            </div>
+
             <div className='flex w-full h-40'>
                 <ResponsiveContainer >
                     <LineChart data={listaHistorico}

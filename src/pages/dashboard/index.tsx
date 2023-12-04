@@ -23,17 +23,20 @@ export default function Dashboard() {
   const [value, setValue] = useState(0);
   const { user } = useContext(UserContext)
   const { atualizaHistorico } = useContext(HistoricoContext)
+  
   useEffect(() => {
-    if (localStorage.getItem('token') == null)
-      navigate('/')
+      if (localStorage.getItem('token') == null) {
+          navigate('/')
+          return
+      }
 
       atualizaHistorico()
-
-  }, [])
+  }, [user.id])
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+
   return (
     <div className='flex flex-col text-white gap-2'>
       <div className='flex mt-4 ml-2 gap-4'>

@@ -1,14 +1,13 @@
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { HistoricoContext } from '../../contexts/historicoContext';
 import { spanProps } from '../../pages/Home';
-import { api } from '../../services/api';
 
 
 
 export default function TabVelocidade() {
     const { listaHistorico } = useContext(HistoricoContext)
-
+    
     function PpmTooltip({ active, payload, label }: any) {
         if (active) {
             const texto = JSON.parse(payload[0].payload.texto) as spanProps[];

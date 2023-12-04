@@ -1,5 +1,5 @@
 import axios from 'axios'
 
 export const apiLogin = axios.create({
-    baseURL:"http://localhost:3001/"
+    baseURL:"http://192.168.10.12:3001/"
 })

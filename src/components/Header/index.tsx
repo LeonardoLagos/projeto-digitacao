@@ -48,7 +48,7 @@ export default function Header() {
           {localStorage.getItem('token') ?
             <div className="flex items-center gap-4">
               <p>{user.nome}</p>
-              <Avatar src={user.fotoPerfil} alt="Foto Perfil." onClick={(e) => navigate('/paginaPerfil')} sx={{cursor: 'pointer'}}/>
+              <Avatar src={user.fotoPerfil} alt="Foto Perfil." onClick={(e) => navigate('/dashboard')} sx={{cursor: 'pointer'}}/>
               <Button color="inherit" onClick={(e) => navigate('/logout')}>Logout</Button>
             </div>
             :
