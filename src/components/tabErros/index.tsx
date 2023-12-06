@@ -32,38 +32,18 @@ export default function TabErros() {
     <div>
       <div className='flex w-full h-60 justify-start'>
         <ResponsiveContainer>
-          <BarChart width={400} height={400} data={listaErros.sort((a, b) => a.numero_erros - b.numero_erros).reverse()}
+          <BarChart  data={listaErros.sort((a, b) => a.numero_erros - b.numero_erros).reverse()}
           >
             <CartesianGrid strokeDasharray="1 1" />
             <YAxis></YAxis>
-            {/* <Tooltip content={({ active, payload, label }: any) => {
-              if (active)
-                return <div className='text-slate-50'>{payload[0].value}</div>
-            }}
-            cursor={false}
-            ></Tooltip> */}
             <XAxis dataKey={"caracter"} ></XAxis>
             <Bar dataKey={"numero_erros"} fill='rgb(220 38 38)' >
               <LabelList
                 dataKey={"numero_erros"}
                 position="insideTop"
-                style={{ fontSize: '80%', fill: 'white', textAnchor: 'middle' }}>
+                style={{ fontSize: '80%', fill: 'white', textAnchor: 'middle', fontWeight: 'bold' }}>
               </LabelList>
             </Bar>
-            {/* <Pie
-            data={listaErros.sort((a => a.numero_erros))}
-            dataKey="numero_erros"
-            nameKey="caracter"
-            label={{ fontSize: '16px' }}
-            labelLine={true}
-            >
-            {
-              listaErros.sort((a => a.numero_erros)).map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={index % 2 === 0 ? 'rgb(220 38 38)' : 'rgb(0 0 0)'} style={{ outline: 'none' }} />
-                ))
-              }
-              <LabelList dataKey="caracter" position="inside" />
-            </Pie> */}
           </BarChart>
         </ResponsiveContainer>
       </div>

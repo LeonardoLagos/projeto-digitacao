@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { HistoricoContext } from '../../contexts/historicoContext';
 import { spanProps } from '../../pages/Home';
@@ -7,7 +7,12 @@ import { spanProps } from '../../pages/Home';
 
 export default function TabVelocidade() {
     const { listaHistorico } = useContext(HistoricoContext)
-    
+    const [velocidadeMedia, setVelocidadeMedia] = useState(0.00)
+
+    useEffect(() => {
+        setVelocidadeMedia(listaHistorico.reduce((acc, cur) => acc + cur.palavras_por_minuto, 0) / listaHistorico.length)
+    }, [listaHistorico])
+
     function PpmTooltip({ active, payload, label }: any) {
         if (active) {
             const texto = JSON.parse(payload[0].payload.texto) as spanProps[];
@@ -43,7 +48,8 @@ export default function TabVelocidade() {
 
     return (
         <div>
-            <div className='flex w-full h-48'>
+            <div className='flex flex-col w-full h-48'>
+                <p className='flex gap-1'>Velocidade média: <p className='font-medium'>{velocidadeMedia > 0 ? velocidadeMedia.toFixed(2) : 0.00} ppm</p></p>
                 <ResponsiveContainer>
                     <LineChart data={listaHistorico}
                         margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
