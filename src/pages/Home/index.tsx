@@ -206,7 +206,7 @@ export default function Home() {
         {textosFinalizados.length > 0 &&
           <div className="flex flex-col bg-slate-800  w-1/4 h-96 rounded mt-2 overflow-y-auto">
             {
-              textosFinalizados.reverse().map((texto, index) => {
+              textosFinalizados.map((texto, index) => {
                 let multiplicadorTempo = 1
                 if (texto.tempo_total !== 0) {
                   multiplicadorTempo = 60 / texto.tempo_total
