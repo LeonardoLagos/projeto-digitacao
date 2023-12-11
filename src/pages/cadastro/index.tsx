@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { z } from 'zod'
 import { apiLogin } from '../../services/apiLogin'
+import toast from 'react-hot-toast'
 
 
 const schema = z.object({
@@ -40,7 +41,9 @@ export default function Cadastro() {
         foto_perfil: '',
         google_id: ''
       }).then((retorno) => {
-        console.log(retorno.data)
+        toast.success('Cadastro realizado com sucesso!')
+        navigate('/login')
+
       }).catch((retorno) => {
         console.log(retorno)
       })
