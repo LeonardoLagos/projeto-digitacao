@@ -45,7 +45,7 @@ export default function Header() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, cursor: 'pointer' }} onClick={(e) => {navigate('/')}} >
             Teste de Digitação
           </Typography>
-          {localStorage.getItem('token') ?
+          {user.id ?
             <div className="flex items-center gap-4">
               <p>{user.nome}</p>
               <Avatar src={user.fotoPerfil} alt="Foto Perfil." onClick={(e) => navigate('/dashboard')} sx={{cursor: 'pointer'}}/>

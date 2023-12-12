@@ -10,6 +10,18 @@ export interface spanProps {
   children: string
 }
 
+interface dadosCaractere {
+  caractere: string,
+  numero_acertos: number,
+  numero_erros: number
+}
+
+interface TeclasDigitadas {
+  id_usuario: string,
+  caractere_correto: string,
+  caractere_digitado: string
+}
+
 export default function Home() {
   const { user } = useContext(UserContext)
   const [contagem, setContagem] = useState(0)
@@ -22,6 +34,7 @@ export default function Home() {
   const [textoCardAtual, setTextoCardAtual] = useState<cardTexto>()
   const [quantidadeAcertos, setQuantidadeAcertos] = useState(0)
   const [quantidadeErros, setQuantidadeErros] = useState(0)
+  const [historicoTeclasDigitadas, setHistoricoTeclasDigitadas] = useState<TeclasDigitadas[]>([] as TeclasDigitadas[])
 
   const navigate = useNavigate()
 
@@ -85,7 +98,6 @@ export default function Home() {
     }
   }, [cronometro])
 
-
   function handleApagar(e: React.KeyboardEvent<HTMLInputElement>) {
     const teclaPresionada = e.key
     if (teclaPresionada === 'Backspace') {
@@ -108,9 +120,19 @@ export default function Home() {
       return
     }
 
+    if (user.id) {
+      setHistoricoTeclasDigitadas((prev) => {
+        prev.push({
+          id_usuario: user.id,
+          caractere_correto: letraCorreta.children,
+          caractere_digitado: caractereDigitado
+        } as TeclasDigitadas);
+        return prev
+      })
+    }
+
     if (caractereDigitado === letraCorreta.children) {
       setQuantidadeAcertos((prev) => prev + 1)
-
       if (letraCorreta.className.includes('erro'))
         letraCorreta.className += ' bg-amber-500'
       else
@@ -126,6 +148,7 @@ export default function Home() {
 
   function handleAtualizaTexto() {
     preencheTexto()
+    setHistoricoTeclasDigitadas([] as TeclasDigitadas[])
     switchDigitacao(true)
     setQuantidadeAcertos(0)
     setQuantidadeErros(0)
@@ -138,7 +161,7 @@ export default function Home() {
     var sec = Math.floor(segundos % 60);
 
     var mDisplay = min > 10 ? min : '0' + min;
-    var sDisplay = sec > 10 ? sec : '0' + sec;
+    var sDisplay = sec >= 10 ? sec : '0' + sec;
     return mDisplay + ':' + sDisplay;
   }
 
@@ -151,8 +174,28 @@ export default function Home() {
   function finalizaDigitacao() {
     switchDigitacao(false)
     setCronometroAtivo(false)
-    setTextosFinalizados((prev) => [...prev, { texto: listaLetras, numero_acertos: quantidadeAcertos, numero_erros: quantidadeErros, tempo_total: cronometro, palavras_por_minuto: (((quantidadeAcertos + quantidadeErros) / 5) * (cronometro == 0 ? 1 : 60 / cronometro)) } as cardTexto])
-    api.post('/historico', {
+    setTextosFinalizados((prev) => {
+      prev.push({
+        texto: listaLetras,
+        numero_acertos: quantidadeAcertos,
+        numero_erros: quantidadeErros,
+        tempo_total: cronometro,
+        palavras_por_minuto: (((quantidadeAcertos + quantidadeErros) / 5) * (cronometro == 0 ? 1 : 60 / cronometro))
+      } as cardTexto);
+      return prev
+    })
+
+    if (user.id === undefined) return
+
+    api.post('/historico/teclas', {
+      lista_teclas: historicoTeclasDigitadas
+    }).then((retorno) => {
+      // console.log(retorno)
+    }).catch((retorno) => {
+      console.log(retorno)
+    })
+
+    api.post('/historico/textos', {
       id_usuario: user.id,
       texto: JSON.stringify(listaLetras),
       quantidade_acertos: quantidadeAcertos,
@@ -160,10 +203,12 @@ export default function Home() {
       palavras_por_minuto: (((quantidadeAcertos + quantidadeErros) / 5) * (cronometro == 0 ? 1 : 60 / cronometro)).toFixed(2),
       tempo_total: 60 - cronometro,
     }).then((retorno) => {
-      console.log(retorno)
+      // console.log(retorno)
     }).catch((retorno) => {
       console.log(retorno)
     })
+
+
     //TODO: adiocionar texto ao histórico banco de dados
   }
 
@@ -176,7 +221,10 @@ export default function Home() {
           <option value="en-us">🏳Inglês</option>
         </select> */}
       </div>
-      <div className="w-full h-56 outline outline-1 rounded mt-4 mb-1 p-2 text-xl font-medium overflow-auto text-justify" ref={refDivPalavras} id="divPalavras" onClick={() => refInputDigitacao.current?.focus()}>
+      <div id="divPalavras"
+        className="w-full h-56 outline outline-1 rounded mt-4 mb-1 p-2 text-xl font-medium overflow-auto text-justify"
+        ref={refDivPalavras}
+        onClick={() => refInputDigitacao.current?.focus()}>
         {listaLetras.map((letra, index) => {
           if (letra.children === ' ') {
             return <span className={letra.className + ' inline-block text-center'} style={{ minWidth: '4px', height: '27px' }} key={index}>&nbsp;</span>
@@ -216,7 +264,7 @@ export default function Home() {
                   setTextoCardAtual(texto)
                 }}>
                   <div className='flex items-center '>
-                    <p className='text-lime-500'>{texto.numero_acertos}</p>/<p className='text-red-400'>{texto.numero_acertos}</p>
+                    <p className='text-lime-500'>{texto.numero_acertos}</p>/<p className='text-red-400'>{texto.numero_erros}</p>
                     <div className='bg-red-500 h-2 w-full rounded overflow-hidden mx-2'>
                       <div className='bg-lime-500' style={{
                         width: `${precisao}%`,

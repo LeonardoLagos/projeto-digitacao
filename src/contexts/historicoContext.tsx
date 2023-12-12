@@ -26,7 +26,7 @@ export function HistoricoProvider({ children }: HistoricoProviderProps) {
     const { user } = useContext(UserContext)
 
     function atualizaHistorico() {
-        api.get('/historico', {
+        api.get('/historico/textos', {
             timeout: 3000,
             params: {
                 id_usuario: user.id

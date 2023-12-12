@@ -2,7 +2,7 @@ import { ReactNode, createContext, useEffect, useState } from "react";
 import { apiLogin } from "../services/apiLogin";
 
 export type Usuario = {
-    id: number,
+    id: string,
     nome: string,
     email: string,
     fotoPerfil: string

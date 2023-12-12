@@ -34,8 +34,6 @@ export default function Cadastro() {
     })
   
     function onSubmit(data: FormData) {
-      console.log(data.email,data.nome, data.senha)
-
       apiLogin.post('/usuarios', {
         nome: data.nome,
         email: data.email,
