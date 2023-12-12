@@ -1,9 +1,8 @@
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { useContext, useEffect, useRef, useState } from "react";
-import { api } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
-import { apiLogin } from '../../services/apiLogin';
 import { UserContext } from '../../contexts/userContext';
+import { api } from '../../services/api';
 import { cardTexto } from '../dashboard';
 
 export interface spanProps {

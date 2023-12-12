@@ -1,10 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, TextField } from '@mui/material'
+import { useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { z } from 'zod'
+import { ToastContext } from '../../contexts/ToastContext'
 import { apiLogin } from '../../services/apiLogin'
-import toast from 'react-hot-toast'
 
 
 const schema = z.object({
@@ -26,6 +27,7 @@ const schema = z.object({
   
 export default function Cadastro() {
     const navigate = useNavigate()
+    const { toast } = useContext(ToastContext)
 
     const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
       resolver: zodResolver(schema)

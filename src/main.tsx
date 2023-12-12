@@ -5,15 +5,18 @@ import { HistoricoProvider } from './contexts/historicoContext.tsx'
 import MuiStyleProvider from './contexts/muiStyleContext.tsx'
 import { UserProvider } from './contexts/userContext.tsx'
 import './index.css'
+import { ToastProvider } from './contexts/ToastContext.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   // <React.StrictMode>
   <UserProvider>
-    <HistoricoProvider>
-    <MuiStyleProvider>
-      <RouterProvider router={router} />
-    </MuiStyleProvider>
-    </HistoricoProvider>
+    <ToastProvider>
+      <HistoricoProvider>
+        <MuiStyleProvider>
+          <RouterProvider router={router} />
+        </MuiStyleProvider>
+      </HistoricoProvider>
+    </ToastProvider>
   </UserProvider>
   //</React.StrictMode>
 )

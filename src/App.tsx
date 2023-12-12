@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom'
-import Header from './components/header'
-import Logout from './components/logout'
+import Header from './components/Header'
+import Logout from './components/Logout'
 import Home from './pages/Home'
 import Cadastro from './pages/cadastro'
 import Dashboard from './pages/dashboard'

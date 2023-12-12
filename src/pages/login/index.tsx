@@ -1,11 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, TextField } from "@mui/material";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { apiLogin } from "../../services/apiLogin";
-import { useContext, useEffect, useState } from "react";
-import { Usuario, UserContext } from "../../contexts/userContext";
 
 
 const schema = z.object({
@@ -16,7 +15,6 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 export default function Login() {
-  const { setUser } = useContext(UserContext)
   const navigate = useNavigate()
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
