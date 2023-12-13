@@ -13,7 +13,7 @@ export default function TabVelocidade() {
         setVelocidadeMedia(listaHistorico.reduce((acc, cur) => acc + cur.palavras_por_minuto, 0) / listaHistorico.length)
     }, [listaHistorico])
 
-    function PpmTooltip({ active, payload, label }: any) {
+    function TooltipFunc({ active, payload, label }: any) {
         if (active) {
             const texto = JSON.parse(payload[0].payload.texto) as spanProps[];
             // setTextoHistorico(texto);
@@ -55,7 +55,7 @@ export default function TabVelocidade() {
                         margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
                         <XAxis dataKey="data" />
                         <YAxis />
-                        <Tooltip content={<PpmTooltip />}></Tooltip>
+                        <Tooltip content={<TooltipFunc />}></Tooltip>
                         <Line type="monotone"
                             dataKey="palavras_por_minuto"
                             stroke='white'

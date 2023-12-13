@@ -1,10 +1,8 @@
 import { useContext, useEffect, useState } from 'react';
-import { DateRangePicker } from 'react-date-range';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import { Cell, LabelList, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { HistoricoContext } from '../../contexts/historicoContext';
-import DateRangePickerComp from '../dataRangePickerComp';
 
 interface precisaoGeral {
     contagem: number,
