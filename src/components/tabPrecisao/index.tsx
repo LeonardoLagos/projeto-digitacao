@@ -38,7 +38,7 @@ export default function TabPrecisao() {
 
     return (
         <div>
-            <div className='flex flex-col w-full h-44 items-center mb-4'>
+            <div className='flex flex-col w-full h-60 items-center '>
                 {/* <div className='w-2/4 h-96'>
                     <DateRangePickerComp />
                 </div> */}

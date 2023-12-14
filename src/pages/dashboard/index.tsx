@@ -22,10 +22,10 @@ export default function Dashboard() {
   const navigate = useNavigate()
   const [value, setValue] = useState(0);
   const { user } = useContext(UserContext)
-  const { atualizaHistorico } = useContext(HistoricoContext)
+  const { listaHistorico, atualizaHistorico } = useContext(HistoricoContext)
   
   useEffect(() => {
-      if (localStorage.getItem('token') == null) {
+      if (user.id == null) {
           navigate('/')
           return
       }
@@ -55,10 +55,10 @@ export default function Dashboard() {
           </Tabs>
         </Box>
         <CustomTabPanel value={value} index={0}>
-          <TabVelocidade></TabVelocidade>
+          {listaHistorico && <TabVelocidade></TabVelocidade>}
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
-          <TabPrecisao></TabPrecisao>
+          {listaHistorico && <TabPrecisao></TabPrecisao>}
         </CustomTabPanel>
         <CustomTabPanel value={value} index={2}>
           <TabErros></TabErros>
