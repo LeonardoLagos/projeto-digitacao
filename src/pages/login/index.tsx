@@ -1,10 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, TextField } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { apiLogin } from "../../services/apiLogin";
+import { UserContext, Usuario } from "../../contexts/userContext";
 
 
 const schema = z.object({
@@ -16,6 +17,7 @@ type FormData = z.infer<typeof schema>
 
 export default function Login() {
   const navigate = useNavigate()
+  const { setUser } = useContext(UserContext)
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema)
@@ -36,6 +38,19 @@ export default function Login() {
       googleId: ''
     }).then((retorno) => {
       localStorage.setItem('token', retorno.data)
+      apiLogin.post('/token', {
+        token: localStorage.getItem('token')
+      }).then((retorno) => {
+        localStorage.setItem('id_usuario', retorno.data.id)
+        setUser({
+          id: retorno.data.id,
+          nome: retorno.data.nome,
+          email: retorno.data.email,
+          fotoPerfil: retorno.data.foto_perfil
+        } as Usuario)
+      }).catch((retorno) => {
+        console.log(retorno)
+      })
       navigate('/')
     }).catch((retorno) => {
       if (retorno.response?.data)

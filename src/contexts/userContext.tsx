@@ -1,5 +1,4 @@
-import { ReactNode, createContext, useEffect, useState } from "react";
-import { apiLogin } from "../services/apiLogin";
+import { ReactNode, createContext, useState } from "react";
 
 export type Usuario = {
     id: string,

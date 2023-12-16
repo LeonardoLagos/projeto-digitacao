@@ -1,14 +1,7 @@
-import { ReactNode, createContext, useContext, useState } from "react";
+import { ReactNode, createContext, useContext, useEffect, useState } from "react";
 import { cardTexto } from "../pages/dashboard";
 import { api } from "../services/api";
 import { UserContext } from "./userContext";
-
-export type Usuario = {
-    id: number,
-    nome: string,
-    email: string,
-    fotoPerfil: string
-}
 
 interface HistoricoProviderProps {
     children: ReactNode
@@ -22,7 +15,7 @@ interface contagemErros {
     porcentagem_erros: number,
     porcentagem_acertos: number,
     label: string
-  }
+}
 
 type HistoricoContextData = {
     listaErros: contagemErros[],
@@ -35,14 +28,13 @@ export const HistoricoContext = createContext({} as HistoricoContextData)
 export function HistoricoProvider({ children }: HistoricoProviderProps) {
     const [listaHistorico, setListaHistorico] = useState<cardTexto[]>([] as cardTexto[])
     const [listaErros, setListaErros] = useState<contagemErros[]>([] as contagemErros[])
-
-    const { user } = useContext(UserContext)
-
+    
     function atualizaHistorico() {
+        if (!localStorage.getItem('id_usuario')) return
         api.get('/historico/textos', {
             timeout: 3000,
             params: {
-                id_usuario: user.id
+                id_usuario: localStorage.getItem('id_usuario')
             }
         })
             .then((validation) => {
@@ -55,7 +47,7 @@ export function HistoricoProvider({ children }: HistoricoProviderProps) {
         api.get('/historico/teclas', {
             timeout: 3000,
             params: {
-                id_usuario: user.id
+                id_usuario: localStorage.getItem('id_usuario')
             },
         })
             .then((validation) => {
@@ -65,8 +57,6 @@ export function HistoricoProvider({ children }: HistoricoProviderProps) {
                 console.log(err)
             })
     }
-
-
 
     return (
         <HistoricoContext.Provider value={{ listaErros, listaHistorico, atualizaHistorico }}>

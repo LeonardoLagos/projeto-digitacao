@@ -2,8 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { HistoricoContext } from '../../contexts/historicoContext';
 import { spanProps } from '../../pages/Home';
-
-
+import TabSemDados from '../tabSemDados';
 
 export default function TabVelocidade() {
     const { listaHistorico } = useContext(HistoricoContext)
@@ -48,31 +47,36 @@ export default function TabVelocidade() {
 
     return (
         <div>
-            <div className='flex flex-col w-full h-48'>
-                <p className='flex gap-1'>Velocidade média: <p className='font-medium'>{velocidadeMedia > 0 ? velocidadeMedia.toFixed(2) : 0.00} ppm</p></p>
-                <ResponsiveContainer>
-                    <LineChart data={listaHistorico}
-                        margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-                        <XAxis dataKey="data" />
-                        <YAxis />
-                        <Tooltip content={<TooltipFunc />}></Tooltip>
-                        <Line type="monotone"
-                            dataKey="palavras_por_minuto"
-                            stroke='white'
-                            animationDuration={500}
-                        ></Line>
-                    </LineChart>
-                </ResponsiveContainer>
+            {listaHistorico.length > 0 ?
+                <div className='flex flex-col w-full h-48'>
+                    <p className='flex gap-1'>Velocidade média: <p className='font-medium'>{velocidadeMedia > 0 ? velocidadeMedia.toFixed(2) : 0.00} ppm</p></p>
+                    <ResponsiveContainer>
+                        <LineChart data={listaHistorico}
+                            margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+                            <XAxis dataKey="data" />
+                            <YAxis />
+                            <Tooltip content={<TooltipFunc />}></Tooltip>
+                            <Line type="monotone"
+                                dataKey="palavras_por_minuto"
+                                stroke='white'
+                                animationDuration={500}
+                                dot={{ strokeWidth: 0, r: 3, fill: 'white' }}
+                            ></Line>
+                        </LineChart>
+                    </ResponsiveContainer>
 
-                {/* <div className="border w-2/5 h-full rounded p-2 text-xl font-medium overflow-auto" >
-          {textoHistorico.map((letra, index) => {
-            if (letra.children === ' ') {
-              return <span className={letra.className + ' inline-block text-center'} style={{ minWidth: '4px', height: '27px' }} key={index}>&nbsp;</span>
+                    {/* <div className="border w-2/5 h-full rounded p-2 text-xl font-medium overflow-auto" >
+                        {textoHistorico.map((letra, index) => {
+                            if (letra.children === ' ') {
+                                  return <span className={letra.className + ' inline-block text-center'} style={{ minWidth: '4px', height: '27px' }} key={index}>&nbsp;</span>
+                                }
+                                return <span className={letra.className} key={index}>{letra.children}</span>
+                            })}
+                    </div> */}
+                </div>
+                :
+                <TabSemDados />
             }
-            return <span className={letra.className} key={index}>{letra.children}</span>
-          })}
-        </div> */}
-            </div>
         </div>
     )
 }

@@ -13,6 +13,7 @@ export interface cardTexto {
   texto: spanProps[],
   numero_acertos: number,
   numero_erros: number,
+  numero_correcoes: number,
   tempo_total: number,
   palavras_por_minuto: number,
   data: Date | null
@@ -23,15 +24,18 @@ export default function Dashboard() {
   const [value, setValue] = useState(0);
   const { user } = useContext(UserContext)
   const { listaHistorico, atualizaHistorico } = useContext(HistoricoContext)
-  
-  useEffect(() => {
-      if (user.id == null) {
-          navigate('/')
-          return
-      }
 
-      atualizaHistorico()
-  }, [user.id])
+  useEffect(() => {
+    if (!localStorage.getItem('id_usuario')) {
+      navigate('/')
+      return
+    }
+  }, [localStorage.getItem('id_usuario')])
+
+  useEffect(() => {
+    atualizaHistorico()
+    console.log('att')
+  }, [])
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);

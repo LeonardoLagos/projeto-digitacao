@@ -1,17 +1,11 @@
-import { useContext, useEffect } from 'react'
+import { useContext } from 'react'
 import { Bar, BarChart, CartesianGrid, LabelList, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { HistoricoContext } from '../../contexts/historicoContext'
 import { UserContext } from '../../contexts/userContext'
-
-
+import TabSemDados from '../tabSemDados'
 
 export default function TabErros() {
-  const { user } = useContext(UserContext)
   const { listaErros } = useContext(HistoricoContext)
-
-  useEffect(() => {
-
-  }, [user.id])
 
   function TooltipFunc({ active, payload, label }: any) {
     try {
@@ -37,24 +31,28 @@ export default function TabErros() {
 
   return (
     <div>
-      <div className='flex w-full h-60 justify-start'>
-        <ResponsiveContainer>
-          <BarChart data={listaErros.filter(x => x.porcentagem_erros > 0).sort((a, b) => a.porcentagem_erros - b.porcentagem_erros).reverse().slice(0, 15)}
-          >
-            <CartesianGrid strokeDasharray="1 1" />
-            <YAxis dataKey={"porcentagem_erros"} allowDecimals={true} ></YAxis>
-            <XAxis dataKey={"caracter"} ></XAxis>
-            <Tooltip content={<TooltipFunc />} cursor={false} ></Tooltip>
-            <Bar dataKey={"porcentagem_erros"} fill='rgb(220 38 38)' >
-              <LabelList
-                dataKey={"label"}
-                position="insideTop"
-                style={{ fontSize: '80%', fill: 'white', textAnchor: 'middle', fontWeight: 'bold' }}>
-              </LabelList>
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+      {listaErros.length > 0 ?
+        <div className='flex w-full h-60 justify-start'>
+          <ResponsiveContainer>
+            <BarChart data={listaErros.filter(x => x.porcentagem_erros > 0).sort((a, b) => a.porcentagem_erros - b.porcentagem_erros).reverse().slice(0, 15)}
+            >
+              <CartesianGrid strokeDasharray="1 1" />
+              <YAxis dataKey={"porcentagem_erros"} allowDecimals={true} ></YAxis>
+              <XAxis dataKey={"caracter"} ></XAxis>
+              <Tooltip content={<TooltipFunc />} cursor={false} ></Tooltip>
+              <Bar dataKey={"porcentagem_erros"} fill='rgb(220 38 38)' >
+                <LabelList
+                  dataKey={"label"}
+                  position="insideTop"
+                  style={{ fontSize: '80%', fill: 'white', textAnchor: 'middle', fontWeight: 'bold' }}>
+                </LabelList>
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        :
+        <TabSemDados />
+      }
     </div>
   )
 }

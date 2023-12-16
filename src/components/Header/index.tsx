@@ -1,4 +1,4 @@
-import { AppBar, Avatar, Button, Container, IconButton, Toolbar, Typography } from "@mui/material";
+import { AppBar, Avatar, Button, Container, Toolbar, Typography } from "@mui/material";
 import { useContext, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { UserContext, Usuario } from "../../contexts/userContext";
@@ -13,11 +13,12 @@ export default function Header() {
     }, [localStorage.getItem('token')])
 
   function verificaToken(){
-    if (!localStorage.getItem('token')) return
+    if (!localStorage.getItem('token') && user.id == undefined) return
 
     apiLogin.post('/token', {
       token: localStorage.getItem('token')
     }).then((retorno) => {
+      localStorage.setItem('id_usuario', retorno.data.id)
       setUser({
         id: retorno.data.id,
         nome: retorno.data.nome,

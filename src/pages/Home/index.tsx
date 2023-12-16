@@ -1,6 +1,7 @@
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from 'react-router-dom';
+import { HistoricoContext } from '../../contexts/historicoContext';
 import { UserContext } from '../../contexts/userContext';
 import { api } from '../../services/api';
 import { cardTexto } from '../dashboard';
@@ -24,6 +25,8 @@ interface TeclasDigitadas {
 
 export default function Home() {
   const { user } = useContext(UserContext)
+  const { atualizaHistorico } = useContext(HistoricoContext)
+
   const [contagem, setContagem] = useState(0)
   const [listaLetras, setListaLetras] = useState<spanProps[]>([])
   const refDivPalavras = useRef<HTMLDivElement>(null)
@@ -34,6 +37,7 @@ export default function Home() {
   const [textoCardAtual, setTextoCardAtual] = useState<cardTexto>()
   const [quantidadeAcertos, setQuantidadeAcertos] = useState(0)
   const [quantidadeErros, setQuantidadeErros] = useState(0)
+  const [quantidadeCorrecoes, setQuantidadeCorrecoes] = useState(0)
   const [historicoTeclasDigitadas, setHistoricoTeclasDigitadas] = useState<TeclasDigitadas[]>([] as TeclasDigitadas[])
 
   const navigate = useNavigate()
@@ -67,6 +71,21 @@ export default function Home() {
       })
   }
 
+
+  useEffect(() => {
+    buscaTexto()
+    preencheTexto()
+
+    if (!localStorage.getItem('id_usuario')) return
+
+    console.log('att')
+    atualizaHistorico()
+  }, [])
+
+  useEffect(() => {
+
+  }, [listaLetras])
+
   useEffect(() => {
     if (contagem <= 0) return;
     if (contagem === listaLetras.length) {
@@ -75,11 +94,6 @@ export default function Home() {
       setCronometroAtivo(true)
     }
   }, [contagem])
-
-  useEffect(() => {
-    buscaTexto()
-    preencheTexto()
-  }, [])
 
   useEffect(() => {
     if (!cronometroAtivo) return
@@ -120,10 +134,10 @@ export default function Home() {
       return
     }
 
-    if (user.id) {
+    if (localStorage.getItem('id_usuario')) {
       setHistoricoTeclasDigitadas((prev) => {
         prev.push({
-          id_usuario: user.id,
+          id_usuario: localStorage.getItem('id_usuario'),
           caractere_correto: letraCorreta.children,
           caractere_digitado: caractereDigitado
         } as TeclasDigitadas);
@@ -133,8 +147,10 @@ export default function Home() {
 
     if (caractereDigitado === letraCorreta.children) {
       setQuantidadeAcertos((prev) => prev + 1)
-      if (letraCorreta.className.includes('erro'))
+      if (letraCorreta.className.includes('erro')) {
+        setQuantidadeCorrecoes((prev) => prev + 1)
         letraCorreta.className += ' bg-amber-500'
+      }
       else
         letraCorreta.className += ' bg-lime-600'
 
@@ -179,13 +195,14 @@ export default function Home() {
         texto: listaLetras,
         numero_acertos: quantidadeAcertos,
         numero_erros: quantidadeErros,
+        numero_correcoes: quantidadeCorrecoes,
         tempo_total: cronometro,
-        palavras_por_minuto: (((quantidadeAcertos + quantidadeErros) / 5) * (cronometro == 0 ? 1 : 60 / cronometro))
+        palavras_por_minuto: (((contagem) / 5) * (cronometro == 0 ? 1 : 60 / cronometro))
       } as cardTexto);
       return prev
     })
 
-    if (user.id === undefined) return
+    if (!localStorage.getItem('id_usuario')) return
 
     api.post('/historico/teclas', {
       lista_teclas: historicoTeclasDigitadas
@@ -196,20 +213,18 @@ export default function Home() {
     })
 
     api.post('/historico/textos', {
-      id_usuario: user.id,
+      id_usuario: localStorage.getItem('id_usuario'),
       texto: JSON.stringify(listaLetras),
-      quantidade_acertos: quantidadeAcertos,
-      quantidade_erros: quantidadeErros,
-      palavras_por_minuto: (((quantidadeAcertos + quantidadeErros) / 5) * (cronometro == 0 ? 1 : 60 / cronometro)).toFixed(2),
+      numero_acertos: quantidadeAcertos,
+      numero_erros: quantidadeErros,
+      numero_correcoes: quantidadeCorrecoes,
+      palavras_por_minuto: (((contagem) / 5) * (cronometro == 0 ? 1 : 60 / cronometro)).toFixed(2),
       tempo_total: 60 - cronometro,
     }).then((retorno) => {
       // console.log(retorno)
     }).catch((retorno) => {
       console.log(retorno)
     })
-
-
-    //TODO: adiocionar texto ao histórico banco de dados
   }
 
   return (
@@ -258,20 +273,25 @@ export default function Home() {
                 if (texto.tempo_total !== 0) {
                   multiplicadorTempo = 60 / texto.tempo_total
                 }
-                const sum = (texto.numero_acertos + texto.numero_erros);
-                const precisao = sum == 0 ? 0 : (texto.numero_acertos / sum) * 100;
+                const sum = (texto.numero_acertos + texto.numero_erros + texto.numero_correcoes);
+                const porcentagemAcertos = sum == 0 ? 0 : (texto.numero_acertos / sum) * 100;
+                const porcentagemCorrecoes = sum == 0 ? 0 : (texto.numero_correcoes / sum) * 100;
                 return <div className="text-white whitespace-nowrap bg-slate-600 rounded  px-4  py-2 m-1 text-sm font-medium" key={index} onClick={(e) => {
                   setTextoCardAtual(texto)
                 }}>
                   <div className='flex items-center '>
-                    <p className='text-lime-500'>{texto.numero_acertos}</p>/<p className='text-red-400'>{texto.numero_erros}</p>
-                    <div className='bg-red-500 h-2 w-full rounded overflow-hidden mx-2'>
+                    <p className='text-lime-500'>{texto.numero_acertos}</p>/<p className='text-red-400'>{texto.numero_erros}</p>/<p className='text-amber-500'>{texto.numero_correcoes}</p>
+                    <div className='flex bg-red-500 h-2 w-full rounded overflow-hidden mx-2'>
                       <div className='bg-lime-500' style={{
-                        width: `${precisao}%`,
+                        width: `${porcentagemAcertos}%`,
+                        height: '8px'
+                      }}></div>
+                      <div className='bg-amber-500' style={{
+                        width: `${porcentagemCorrecoes}%`,
                         height: '8px'
                       }}></div>
                     </div>
-                    <p className='text-lime-500'>{precisao.toFixed(2)}%</p>
+                    <p className='text-lime-500'>{porcentagemAcertos.toFixed(2)}%</p>
                   </div>
                   {/* <p>tempo: {60 - texto.tempoRestante}s</p> */}
                   <p>Velocidade: {((sum / 5) * multiplicadorTempo).toFixed(2)} ppm</p>
@@ -291,8 +311,9 @@ export default function Home() {
             </div>
             <p className='text-lime-500'>Quantidade acertos: {textoCardAtual.numero_acertos}</p>
             <p className='text-red-400'>Quantidade erros: {textoCardAtual.numero_erros}</p>
+            <p className='text-amber-500'>Quantidade correcoes: {textoCardAtual.numero_correcoes}</p>
             <p>Tempo: {60 - textoCardAtual.tempo_total}s</p>
-            <p>Velocidade: {(((textoCardAtual.numero_acertos + textoCardAtual.numero_erros) / 5) * (textoCardAtual.tempo_total == 0 ? 1 : 60 / textoCardAtual.tempo_total)).toFixed(2)} ppm</p>
+            <p>Velocidade: {textoCardAtual.palavras_por_minuto} ppm</p>
           </div>
         }
       </div>
