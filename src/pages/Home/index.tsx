@@ -35,9 +35,6 @@ export default function Home() {
   const [cronometro, setCronometro] = useState(60)
   const [textosFinalizados, setTextosFinalizados] = useState<cardTexto[]>([] as cardTexto[])
   const [textoCardAtual, setTextoCardAtual] = useState<cardTexto>()
-  const [quantidadeAcertos, setQuantidadeAcertos] = useState(0)
-  const [quantidadeErros, setQuantidadeErros] = useState(0)
-  const [quantidadeCorrecoes, setQuantidadeCorrecoes] = useState(0)
   const [historicoTeclasDigitadas, setHistoricoTeclasDigitadas] = useState<TeclasDigitadas[]>([] as TeclasDigitadas[])
 
   const navigate = useNavigate()
@@ -145,18 +142,18 @@ export default function Home() {
       })
     }
 
-    if (caractereDigitado === letraCorreta.children) {
-      setQuantidadeAcertos((prev) => prev + 1)
+    my_if: if (caractereDigitado === letraCorreta.children) {
       if (letraCorreta.className.includes('erro')) {
-        setQuantidadeCorrecoes((prev) => prev + 1)
         letraCorreta.className += ' bg-amber-500'
+        break my_if;
       }
-      else
-        letraCorreta.className += ' bg-lime-600'
+
+      letraCorreta.className += ' bg-lime-600'
 
     } else {
-      setQuantidadeErros((prev) => prev + 1)
       letraCorreta.className += ' bg-red-600'
+      if (letraCorreta.className.includes('erro')) break my_if;
+
       letraCorreta.className += ' erro'
     }
     setContagem((prev) => prev + 1)
@@ -166,8 +163,6 @@ export default function Home() {
     preencheTexto()
     setHistoricoTeclasDigitadas([] as TeclasDigitadas[])
     switchDigitacao(true)
-    setQuantidadeAcertos(0)
-    setQuantidadeErros(0)
     setCronometro(60)
     setContagem(0)
   }
@@ -190,6 +185,23 @@ export default function Home() {
   function finalizaDigitacao() {
     switchDigitacao(false)
     setCronometroAtivo(false)
+    let quantidadeAcertos = 0;
+    let quantidadeCorrecoes = 0;
+    let quantidadeErros = 0;
+
+    listaLetras.forEach((letra) => {
+      if (letra.className.includes('bg-lime-600')) {
+        quantidadeAcertos++
+      }
+      if (letra.className.includes('bg-red-600')) {
+        quantidadeErros++
+      }
+      if (letra.className.includes('bg-amber-500')) {
+        quantidadeCorrecoes++
+      }
+
+    })
+
     setTextosFinalizados((prev) => {
       prev.push({
         texto: listaLetras,
@@ -197,7 +209,7 @@ export default function Home() {
         numero_erros: quantidadeErros,
         numero_correcoes: quantidadeCorrecoes,
         tempo_total: cronometro,
-        palavras_por_minuto: (((contagem) / 5) * (cronometro == 0 ? 1 : 60 / cronometro))
+        palavras_por_minuto: (((contagem) / 5) * (cronometro == 0 ? 1 : 60 / cronometro)).toFixed(2).replace('.00', '') as unknown as number,
       } as cardTexto);
       return prev
     })
@@ -218,7 +230,7 @@ export default function Home() {
       numero_acertos: quantidadeAcertos,
       numero_erros: quantidadeErros,
       numero_correcoes: quantidadeCorrecoes,
-      palavras_por_minuto: (((contagem) / 5) * (cronometro == 0 ? 1 : 60 / cronometro)).toFixed(2),
+      palavras_por_minuto: (((contagem) / 5) * (cronometro == 0 ? 1 : 60 / cronometro)).toFixed(2).replace('.00', ''),
       tempo_total: 60 - cronometro,
     }).then((retorno) => {
       // console.log(retorno)
@@ -291,10 +303,10 @@ export default function Home() {
                         height: '8px'
                       }}></div>
                     </div>
-                    <p className='text-lime-500'>{porcentagemAcertos.toFixed(2)}%</p>
+                    <p className='text-lime-500'>{porcentagemAcertos.toFixed(2).replace('.00', '')}%</p>
                   </div>
                   {/* <p>tempo: {60 - texto.tempoRestante}s</p> */}
-                  <p>Velocidade: {((sum / 5) * multiplicadorTempo).toFixed(2)} ppm</p>
+                  <p>Velocidade: {texto.palavras_por_minuto} ppm</p>
                 </div>
               })
             }

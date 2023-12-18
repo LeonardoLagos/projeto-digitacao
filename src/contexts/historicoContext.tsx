@@ -1,7 +1,6 @@
-import { ReactNode, createContext, useContext, useEffect, useState } from "react";
+import { ReactNode, createContext, useState } from "react";
 import { cardTexto } from "../pages/dashboard";
 import { api } from "../services/api";
-import { UserContext } from "./userContext";
 
 interface HistoricoProviderProps {
     children: ReactNode

@@ -18,6 +18,7 @@ export default function TabVelocidade() {
             // setTextoHistorico(texto);
             const numero_acertos = Number(payload[0].payload.numero_acertos);
             const numero_erros = Number(payload[0].payload.numero_erros);
+            const numero_correcoes = Number(payload[0].payload.numero_correcoes);
             const sum = (numero_acertos + numero_erros);
             const precisao = sum == 0 ? 0 : (numero_acertos / sum) * 100;
 
@@ -25,7 +26,9 @@ export default function TabVelocidade() {
                 <div className="text-white whitespace-nowrap bg-slate-600 rounded  px-4  py-2 m-1 text-sm font-medium">
                     <div className='flex flex-col items-left'>
                         <div className='flex'>
-                            <p className='text-lime-500'>{numero_acertos}</p>/<p className='text-red-400'>{numero_erros}</p>
+                            <p className='text-lime-500'>{numero_acertos}</p> /
+                            <p className='text-red-400'>{numero_erros}</p> /
+                            <p className='text-amber-500'>{numero_correcoes}</p>
                         </div>
                         <div className='flex items-center'>
                             <div className='bg-red-500 h-2 w-full rounded overflow-hidden mr-2'>
@@ -34,11 +37,11 @@ export default function TabVelocidade() {
                                     height: '8px'
                                 }}></div>
                             </div>
-                            <p className='text-lime-500'>{precisao.toFixed(2)}%</p>
+                            <p className='text-lime-500'>{precisao.toFixed(2).replace('.00', '')}%</p>
                         </div>
                     </div>
                     {/* <p>tempo: {60 - texto.tempoRestante}s</p> */}
-                    <p>Velocidade: {((sum / 5) * 1).toFixed(2)} ppm</p>
+                    <p>Velocidade: {((sum / 5) * 1).toFixed(2).replace('.00', '')} ppm</p>
                 </div>
             );
         }
@@ -49,7 +52,7 @@ export default function TabVelocidade() {
         <div>
             {listaHistorico.length > 0 ?
                 <div className='flex flex-col w-full h-48'>
-                    <p className='flex gap-1'>Velocidade média: <p className='font-medium'>{velocidadeMedia > 0 ? velocidadeMedia.toFixed(2) : 0.00} ppm</p></p>
+                    <p className='flex gap-1'>Velocidade média: <p className='font-medium'>{velocidadeMedia > 0 ? velocidadeMedia.toFixed(2).replace('.00', '') : 0.00} ppm</p></p>
                     <ResponsiveContainer>
                         <LineChart data={listaHistorico}
                             margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>

@@ -1,7 +1,6 @@
 import { useContext } from 'react'
 import { Bar, BarChart, CartesianGrid, LabelList, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { HistoricoContext } from '../../contexts/historicoContext'
-import { UserContext } from '../../contexts/userContext'
 import TabSemDados from '../tabSemDados'
 
 export default function TabErros() {

@@ -28,10 +28,9 @@ export default function TabPrecisao() {
         const erros = listaHistorico.reduce((acc, cur) => acc + cur.numero_erros, 0)
         const correcoes = listaHistorico.reduce((acc, cur) => acc + cur.numero_correcoes, 0)
         const acertos = listaHistorico.reduce((acc, cur) => acc + cur.numero_acertos, 0)
-        const errosReal = erros - correcoes ? erros - correcoes : 0
-
-        const precisaoGeral = (acertos / (erros + acertos + correcoes) * 100).toFixed(2) + '%'
-        const precisaoReal = (acertos / (errosReal + acertos) * 100).toFixed(2) + '%'
+        const acertosReal = acertos + correcoes
+        const precisaoGeral = (acertos / (erros + acertos + correcoes) * 100).toFixed(2).replace('.00', '') + '%'
+        const precisaoReal = (acertosReal / (acertosReal + erros) * 100).toFixed(2).replace('.00', '') + '%'
 
         listaPrecisaoGeral.push({
             contagem: erros,
@@ -52,13 +51,13 @@ export default function TabPrecisao() {
         setPrecisaoGeral(listaPrecisaoGeral)
 
         listaPrecisaoReal.push({
-            contagem: erros - correcoes,
+            contagem: erros,
             tipo: 'erros',
             precisao: precisaoReal
         })
 
         listaPrecisaoReal.push({
-            contagem: acertos,
+            contagem: acertosReal,
             tipo: 'acertos',
             precisao: precisaoReal
         })
