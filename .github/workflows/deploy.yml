@@ -1,18 +1,18 @@
-name: Push-to-EC2
+name: Envio-para-EC2
 on:
   push:
     branches:
       - main
 jobs:
   deploy:
-    name: Deploy to EC2
+    name: Deploy no EC2
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout the files
+    - name: verifica os arquivos
       uses: actions/checkout@v3
 
-    - name: Copy files with SSH
+    - name: copia os arquivos pelo SSH
       uses: easingthemes/ssh-deploy@main
       env:
         SSH_PRIVATE_KEY: ${{secrets.EC2_SSH_KEY}}
@@ -24,15 +24,14 @@ jobs:
         TARGET: ${{secrets.TARGET}}
         EXCLUDE: "/dist/, /node_modules/, **.env"
         
-  build:
-    name: Build app
-    runs-on: ubuntu-latest
+    - name: Verifica repositório
+      uses: actions/checkout@v3
   
-    steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
+    - name: Configura SSH
+      uses: webfactory/ssh-agent@v0.8.0
+      with:
+        ssh-private-key: ${{secrets.EC2_SSH_KEY}}
   
-    - name: Install Dependencies
-      run: |
-        npm install
-            
+    - name: Conecta com a VW e instala as dependências
+      run: >
+          ssh -o StrictHostKeyChecking=no ${{secrets.REMOTE_USER}}@${{secrets.REMOTE_HOST}} "cd ${{secrets.TARGET}} && npm install"

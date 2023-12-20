@@ -16,7 +16,8 @@ export interface cardTexto {
   numero_correcoes: number,
   tempo_total: number,
   palavras_por_minuto: number,
-  data: Date | null
+  data: Date | null,
+  data_resumida: string | undefined
 }
 
 export default function Dashboard() {

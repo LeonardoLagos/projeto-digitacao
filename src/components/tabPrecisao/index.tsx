@@ -127,7 +127,7 @@ export default function TabPrecisao() {
                         <ResponsiveContainer >
                             <LineChart data={listaHistorico}
                                 margin={{ top: 20, right: 30 }}>
-                                <XAxis dataKey="data" />
+                                <XAxis dataKey="data_resumida" />
                                 <YAxis />
                                 {/* <Legend></Legend> */}
                                 <Tooltip content={({ active, payload, label }: any) => {

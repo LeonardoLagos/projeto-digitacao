@@ -5,6 +5,7 @@ import { HistoricoContext } from '../../contexts/historicoContext';
 import { UserContext } from '../../contexts/userContext';
 import { api } from '../../services/api';
 import { cardTexto } from '../dashboard';
+import ModalInfoCompleto from '../../components/modalInfoCompleto';
 
 export interface spanProps {
   className: string,
@@ -72,7 +73,7 @@ export default function Home() {
   useEffect(() => {
     buscaTexto()
     preencheTexto()
-
+    document.body.addEventListener('click', () => refInputDigitacao.current?.focus());
     if (!localStorage.getItem('id_usuario')) return
 
     console.log('att')
@@ -199,7 +200,6 @@ export default function Home() {
       if (letra.className.includes('bg-amber-500')) {
         quantidadeCorrecoes++
       }
-
     })
 
     setTextosFinalizados((prev) => {
@@ -240,7 +240,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col text-slate-50">
+    <div className="flex flex-col text-slate-50" style={{ height: '93vh' }}>
       <div className="flex gap-1">
         {/* <p>Linguagem:</p>
         <select className="outline outline-1 rounded px-1 text-sm">
@@ -288,11 +288,17 @@ export default function Home() {
                 const sum = (texto.numero_acertos + texto.numero_erros + texto.numero_correcoes);
                 const porcentagemAcertos = sum == 0 ? 0 : (texto.numero_acertos / sum) * 100;
                 const porcentagemCorrecoes = sum == 0 ? 0 : (texto.numero_correcoes / sum) * 100;
-                return <div className="text-white whitespace-nowrap bg-slate-600 rounded  px-4  py-2 m-1 text-sm font-medium" key={index} onClick={(e) => {
-                  setTextoCardAtual(texto)
-                }}>
+                
+                return <div
+                  className="text-white whitespace-nowrap bg-slate-600 rounded  px-4  py-2 m-1 text-sm font-medium"
+                  key={index}
+                  onClick={(e) => {
+                    setTextoCardAtual(texto)
+                  }}>
                   <div className='flex items-center '>
-                    <p className='text-lime-500'>{texto.numero_acertos}</p>/<p className='text-red-400'>{texto.numero_erros}</p>/<p className='text-amber-500'>{texto.numero_correcoes}</p>
+                    <p className='text-lime-500'>{texto.numero_acertos}</p>/
+                    <p className='text-red-400'>{texto.numero_erros}</p>/
+                    <p className='text-amber-500'>{texto.numero_correcoes}</p>
                     <div className='flex bg-red-500 h-2 w-full rounded overflow-hidden mx-2'>
                       <div className='bg-lime-500' style={{
                         width: `${porcentagemAcertos}%`,
@@ -312,21 +318,7 @@ export default function Home() {
             }
           </div>}
         {textoCardAtual &&
-          <div className='bg-slate-600 w-3/4 h-96 rounded px-4 py-2 ml-2 mt-2 text font-medium'>
-            <div className="border w-full h-56 rounded mt-1 p-2 text-xl font-medium overflow-auto" >
-              {textoCardAtual.texto.map((letra, index) => {
-                if (letra.children === ' ') {
-                  return <span className={letra.className + ' inline-block text-center'} style={{ minWidth: '4px', height: '27px' }} key={index}>&nbsp;</span>
-                }
-                return <span className={letra.className} key={index}>{letra.children}</span>
-              })}
-            </div>
-            <p className='text-lime-500'>Quantidade acertos: {textoCardAtual.numero_acertos}</p>
-            <p className='text-red-400'>Quantidade erros: {textoCardAtual.numero_erros}</p>
-            <p className='text-amber-500'>Quantidade correcoes: {textoCardAtual.numero_correcoes}</p>
-            <p>Tempo: {60 - textoCardAtual.tempo_total}s</p>
-            <p>Velocidade: {textoCardAtual.palavras_por_minuto} ppm</p>
-          </div>
+          <ModalInfoCompleto informacoesModal={textoCardAtual}/>
         }
       </div>
     </div>

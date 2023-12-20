@@ -43,17 +43,17 @@ export default function Header() {
           >
             <MenuIcon />
           </IconButton> */}
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1, cursor: 'pointer' }} onClick={(e) => {navigate('/')}} >
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1, cursor: 'pointer' }} onClick={() => {navigate('/')}} >
             Teste de Digitação
           </Typography>
           {user.id ?
             <div className="flex items-center gap-4">
               <p>{user.nome}</p>
-              <Avatar src={user.fotoPerfil} alt="Foto Perfil." onClick={(e) => navigate('/dashboard')} sx={{cursor: 'pointer'}}/>
-              <Button color="inherit" onClick={(e) => navigate('/logout')}>Logout</Button>
+              <Avatar src={user.fotoPerfil} alt="Foto Perfil." onClick={() => navigate('/dashboard')} sx={{cursor: 'pointer'}}/>
+              <Button color="inherit" onClick={() => navigate('/logout')}>Logout</Button>
             </div>
             :
-            <Button color="inherit" onClick={(e) => navigate('/login')}>Login</Button>
+            <Button color="inherit" onClick={() => navigate('/login')}>Login</Button>
           }
         </Toolbar>
       </AppBar>

@@ -35,7 +35,7 @@ const DateRangePickerComp = () => {
   }, [])
 
   // hide dropdown on ESC press
-  const hideOnEscape = (e) => {
+  const hideOnEscape = (e:any) => {
     // console.log(e.key)
     if (e.key === "Escape") {
       setOpen(false)
@@ -43,7 +43,7 @@ const DateRangePickerComp = () => {
   }
 
   // Hide on outside click
-  const hideOnClickOutside = (e) => {
+  const hideOnClickOutside = (e:any) => {
     // console.log(refOne.current)
     // console.log(e.target)
     if (refOne.current && !refOne.current.contains(e.target)) {
