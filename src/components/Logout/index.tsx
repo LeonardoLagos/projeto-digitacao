@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { UserContext, Usuario } from '../../contexts/userContext'
+import { User, UserContext } from '../../contexts/userContext'
 
 export default function Logout() {
     const navigate = useNavigate()
@@ -9,7 +9,7 @@ export default function Logout() {
     useEffect(() => {
         localStorage.removeItem('token')
         localStorage.removeItem('id_usuario')
-        setUser({} as Usuario)
+        setUser({} as User)
         navigate('/')
     }, [])
     return (

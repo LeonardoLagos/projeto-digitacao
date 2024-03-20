@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { HistoricoContext } from '../../contexts/historicoContext';
 import { cardTexto } from '../../pages/dashboard';
-import FundoParaSobreposicao from '../fundoParaSobreposicao';
+import FundoParaSobreposicao from '../modal/modal';
 import ModalInfoCompleto from '../modalInfoCompleto';
 import TabSemDados from '../tabSemDados';
 

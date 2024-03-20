@@ -1,29 +1,29 @@
 import { ReactNode, createContext, useState } from "react";
 
-export type Usuario = {
-    id: string,
-    nome: string,
-    email: string,
-    fotoPerfil: string
-}
+export type User = {
+  id: string;
+  name: string;
+  email: string;
+  profilePic: string;
+};
 
 interface UserProviderProps {
-    children: ReactNode
+  children: ReactNode;
 }
 
 type UserContextData = {
-    user: Usuario,
-    setUser: (user: Usuario) => void
-}
+  user: User;
+  setUser: (user: User) => void;
+};
 
-export const UserContext = createContext({} as UserContextData)
+export const UserContext = createContext({} as UserContextData);
 
 export function UserProvider({ children }: UserProviderProps) {
-    const [user, setUser] = useState({} as Usuario)
+  const [user, setUser] = useState({} as User);
 
-    return (
-        <UserContext.Provider value={{ user, setUser }}>
-            {children}
-        </UserContext.Provider>
-    )
+  return (
+    <UserContext.Provider value={{ user, setUser }}>
+      {children}
+    </UserContext.Provider>
+  );
 }
